@@ -6,8 +6,16 @@ using UnityEngine.EventSystems;
 
 public class Inventory : MonoBehaviour
 {
-    public DataBase data;
+    [Header("Player Reference")]
+    public PlayerHealth playerHealth;
+
+    [Tooltip("ItemDatabase")]
+    public ItemDatabase data;
     public List<ItemInventory> items = new List<ItemInventory>();
+
+    [Header("UI")]
+    [Tooltip("—сылка на Text, где показываем вес (в кг)")]
+    public TMP_Text weightText;
 
     public GameObject gameObjShow;
 
@@ -22,7 +30,7 @@ public class Inventory : MonoBehaviour
     public ItemInventory currentItem;
 
     public RectTransform movingObject;
-    public Vector3 offset;
+    public Vector2 offset;
 
     public GameObject backGround;
 
@@ -41,6 +49,7 @@ public class Inventory : MonoBehaviour
 
     public void Start()
     {
+        Debug.Log($"ItemDatabase size = {data.items.Count}");
         if (items.Count == 0)
         {
             AddGraphics();
@@ -51,6 +60,12 @@ public class Inventory : MonoBehaviour
         armorSlot.id = 0;
         healSlot.itemGameObj = healSlotObject;
         healSlot.id = 0;
+        for (int i = 0; i < maxCount; i++)
+        {
+            AddItem(i, data.items[0], 0);
+        }
+
+
         /*
          * это 
          * дл€
@@ -60,18 +75,23 @@ public class Inventory : MonoBehaviour
         for (int i = 0; i < maxCount; i++)
         {
             int number = Random.Range(0, data.items.Count);
+            Debug.Log($"number = {number}");
+            if (data.items[number] == null)
+            {
+                Debug.Log($"Here error");
+            }
             AddItem(i, data.items[number], Random.Range(1, data.items[number].maxCountInStack));
         }
 
     }
 
-    bool IsHeal(Item item)
+    bool IsHeal(ItemData item)
     {
-        if (item.type == ItemType.Heal) return true;
+        if (item is ItemHeal) return true;
         return false;
     }
 
-    public void EquipHeal(Item item)
+    public void EquipHeal(ItemData item)
     {
         if (item == null || item.id == 0)
             return;
@@ -142,13 +162,27 @@ public class Inventory : MonoBehaviour
 
 
     ///
-    bool IsArmor(Item item)
+    bool IsArmor(ItemData item)
     {
-        if (item.type == ItemType.Armor) return true;
+        if (item is ItemArmor) return true;
         return false;
     }
 
-    public void EquipArmor(Item item)
+    public void RemoveArmor()
+    {
+        armorSlot.id = 0;
+        armorSlot.count = 0;
+        armorSlot.itemGameObj.GetComponent<Image>().sprite = armorSlotDefaultSprite;
+        UpdateArmorSlotText();
+
+        // ќбновл€ем состо€ние брони в PlayerHealth
+        /*
+        PlayerHealth health = GetComponent<PlayerHealth>();
+        if (health != null) health.UpdateArmorFromInventory();
+        */
+    }
+
+    public void EquipArmor(ItemData item)
     {
         if (item == null || item.id == 0)
             return;
@@ -218,13 +252,13 @@ public class Inventory : MonoBehaviour
 
     ///
 
-    bool IsWeapon(Item item)
+    bool IsWeapon(ItemData item)
     {
-        if (item.type == ItemType.Weapon) return true;
+        if (item is WeaponItemData) return true;
         return false;
     }
 
-    public void EquipWeapon(Item item)
+    public void EquipWeapon(ItemData item)
     {
         if (item == null || item.id == 0)
             return;
@@ -294,6 +328,40 @@ public class Inventory : MonoBehaviour
             text.text = weaponSlot.id == 0 ? "" : data.items[weaponSlot.id].name;
     }
 
+    ///
+
+    public int GetTotalWeightInGrams()
+    {
+        int totalWeight = 0;
+        for(int i=0;i<maxCount;i++)
+        {
+            if (items[i].id != 0)
+            {
+                totalWeight += data.items[items[i].id].weight * items[i].count;
+            }
+        }
+
+        if (weaponSlot.id != 0 && weaponSlot.count > 0)
+            totalWeight += data.items[weaponSlot.id].weight * weaponSlot.count;
+
+        if (armorSlot.id != 0 && armorSlot.count > 0)
+            totalWeight += data.items[armorSlot.id].weight * armorSlot.count;
+
+        if (healSlot.id != 0 && healSlot.count > 0)
+            totalWeight += data.items[healSlot.id].weight * healSlot.count;
+        ///Debug.Log($"currentID = {currentID}   currentItem.id= {currentItem.id}");
+        if (currentID != -1)
+            totalWeight +=  data.items[currentItem.id].weight * currentItem.count;
+        return totalWeight;
+    }
+
+    public float GetTotalWeightInKg()
+    {
+        float totalWeight = GetTotalWeightInGrams() / 1000f;
+        weightText.text = $"{totalWeight:F1} кг";
+        return totalWeight;
+    }
+
     void Update()
     {
         // ќткрытие/закрытие инвентар€ по клавише I
@@ -315,7 +383,7 @@ public class Inventory : MonoBehaviour
         }
     }
 
-    public int SearchForSameItem(Item item, int count)
+    public int SearchForSameItem(ItemData item, int count)
     {
         for(int i = 0; i < maxCount; i++)
         {
@@ -351,7 +419,7 @@ public class Inventory : MonoBehaviour
         return count;
     }
 
-    public void AddItem(int id, Item item, int count)
+    public void AddItem(int id, ItemData item, int count)
     {
         if (id < 0 || id >= items.Count)
         {
@@ -454,6 +522,11 @@ public class Inventory : MonoBehaviour
 
     public void SelectObject()
     {
+        if (!int.TryParse(es.currentSelectedGameObject.name, out int index))
+        {
+            Debug.Log($"cant pars = {es.currentSelectedGameObject.name}");
+            return;
+        }
         int selectedID = int.Parse(es.currentSelectedGameObject.name);
         ItemInventory slotItem = items[selectedID];  // предмет в выбранной €чейке
         ItemInventory cursorItem = currentItem;      // предмет на курсоре
@@ -461,7 +534,7 @@ public class Inventory : MonoBehaviour
         // ≈сли курсор пустой Ч просто берем предмет из слота
         if (currentID == -1)
         {
-            Debug.Log($"currentItem.id = {currentItem.id}   selectedID = {selectedID} item = {items[selectedID].id}");
+            //Debug.Log($"currentItem.id = {currentItem.id}   selectedID = {selectedID} item = {items[selectedID].id}");
             if (items[selectedID].id == 0) return;
             currentID = selectedID;
             currentItem = CopyInventoryItem(slotItem);
@@ -532,9 +605,8 @@ public class Inventory : MonoBehaviour
 
     public void  MoveObject()
     {
-        Vector3 pos = Input.mousePosition + offset;
-        pos.z = InventoryMainObject.GetComponent<RectTransform>().position.z;
-        movingObject.position = cam.ScreenToWorldPoint(pos);
+        Vector2 mousePos = Input.mousePosition;
+        movingObject.position = mousePos + offset;
     }
 
     public ItemInventory CopyInventoryItem(ItemInventory old)
