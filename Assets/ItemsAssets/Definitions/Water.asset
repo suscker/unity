@@ -12,10 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10f9935d1cb5e004ba31e29b238c6ca1, type: 3}
   m_Name: Water
   m_EditorClassIdentifier: 
-  id: 0
-  cost: 0
-  itemName: 
-  img: {fileID: 0}
-  maxCountInStack: 1
-  weight: 0
-  type: 0
+  id: 4
+  cost: 250
+  itemName: Water
+  img: {fileID: 8509550459451208454, guid: 08bda46669222da428e359f3e6ec34ae, type: 3}
+  maxCountInStack: 4
+  weight: 500

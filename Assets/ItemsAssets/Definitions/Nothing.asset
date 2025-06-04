@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Nothing
   m_EditorClassIdentifier: 
   id: 0
-  itemName: 
-  img: {fileID: 0}
+  cost: 0
+  itemName: Nothing
+  img: {fileID: -7443756053782179069, guid: 1a5f661d1abf96e479403ee27206af9a, type: 3}
   maxCountInStack: 1
   weight: 0
-  type: 0

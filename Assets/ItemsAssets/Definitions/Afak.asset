@@ -12,11 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39ae09b21e9ac2f4597c602bd184cdfa, type: 3}
   m_Name: Afak
   m_EditorClassIdentifier: 
-  id: 0
-  itemName: 
-  img: {fileID: 0}
+  id: 2
+  cost: 1000
+  itemName: Afak
+  img: {fileID: 8493279594292987168, guid: 2de367df5659b6142a3e7a70b6e06a4c, type: 3}
   maxCountInStack: 1
-  weight: 0
-  type: 0
-  currentHeal: 0
-  maxHeal: 0
+  weight: 400
+  currentHeal: 300
+  maxHeal: 300
+  healHoldTime: 4

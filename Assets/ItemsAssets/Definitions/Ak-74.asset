@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Ak-74
   m_EditorClassIdentifier: 
   id: 1
+  cost: 4000
   itemName: Ak-74
   img: {fileID: 4568132766191599552, guid: fb4b423545b64f74881ef968bbbdae93, type: 3}
   maxCountInStack: 1
   weight: 3000
-  type: 0
   damage: 24
   magazineSize: 30
   currentAmmo: 0

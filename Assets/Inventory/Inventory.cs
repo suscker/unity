@@ -38,11 +38,12 @@ public class Inventory : MonoBehaviour
     public GameObject weaponSlotObject; 
     public Sprite weaponSlotDefaultSprite;
 
-    public ItemInventory armorSlot = new ItemInventory();
+    //public ItemInventory armorSlot = new ItemInventory();
+    public ArmorInventory armorSlot;
     public GameObject armorSlotObject;
     public Sprite armorSlotDefaultSprite;
 
-    public ItemInventory healSlot = new ItemInventory();
+    public HealInventory healSlot = null;
     public GameObject healSlotObject;
     public Sprite healSlotDefaultSprite;
 
@@ -56,10 +57,15 @@ public class Inventory : MonoBehaviour
         }
         weaponSlot.itemGameObj = weaponSlotObject;
         weaponSlot.id = 0;
-        armorSlot.itemGameObj = armorSlotObject;
-        armorSlot.id = 0;
-        healSlot.itemGameObj = healSlotObject;
-        healSlot.id = 0;
+
+        armorSlot = new ArmorInventory(
+        new ItemInventory { id = 0, itemGameObj = armorSlotObject },
+        new ItemArmor()
+        );
+        healSlot = new HealInventory(
+        new ItemInventory { id = 0, itemGameObj = armorSlotObject },
+        new ItemHeal()
+        );
         for (int i = 0; i < maxCount; i++)
         {
             AddItem(i, data.items[0], 0);
@@ -75,15 +81,40 @@ public class Inventory : MonoBehaviour
         for (int i = 0; i < maxCount; i++)
         {
             int number = Random.Range(0, data.items.Count);
-            Debug.Log($"number = {number}");
-            if (data.items[number] == null)
+            ItemData rndItem = data.items[number];
+
+            // Если выпала броня — сложим в ячейку ArmorInventory и зададим ей random durability
+            if (rndItem is ItemArmor armorData)
             {
-                Debug.Log($"Here error");
+                AddItem(i, rndItem, 1);
+
+                // и лишь после этого устанавливаем случайную прочность (если нужно)
+                if (items[i] is ArmorInventory aSlot)
+                {
+                    aSlot.currentDurability = Random.Range(1, aSlot.maxDurability + 1);
+
+                    // И снова обновляем текст (но на самом деле это необязательно—
+                    // AddItem уже нарисовал исходную, а здесь мы просто «подправляем»):
+                    var txt = aSlot.itemGameObj.GetComponentInChildren<TMP_Text>();
+                    if (txt != null)
+                        txt.text = $"{aSlot.currentDurability}/{aSlot.maxDurability}";
+                }
             }
-            AddItem(i, data.items[number], Random.Range(1, data.items[number].maxCountInStack));
+            else
+            {
+                // Обычный предмет
+                int rndCount = rndItem.maxCountInStack > 1
+                               ? Random.Range(1, rndItem.maxCountInStack)
+                               : 1;
+                AddItem(i, rndItem, rndCount);
+            }
         }
 
+        UpdateInventory();
     }
+
+
+    ///
 
     bool IsHeal(ItemData item)
     {
@@ -91,74 +122,114 @@ public class Inventory : MonoBehaviour
         return false;
     }
 
-    public void EquipHeal(ItemData item)
+    public void OnHealDestroyed()
     {
-        if (item == null || item.id == 0)
+        // Сбрасываем слот аптечки
+        healSlot = new HealInventory(
+            new ItemInventory { id = 0, itemGameObj = healSlotObject },
+            new ItemHeal()
+        );
+
+        healSlot.itemGameObj.GetComponent<Image>().sprite = healSlotDefaultSprite;
+        UpdateHealSlotText();
+
+        Debug.Log("Аптечка потрачена!");
+    }
+
+    public void EquipHeal(ItemInventory baseItem)
+    {
+        if (baseItem == null || baseItem.id == 0)
             return;
 
-        healSlot.id = item.id;
-        healSlot.count = 1;
-        healSlot.itemGameObj.GetComponent<Image>().sprite = item.img;
+        var healData = data.items[baseItem.id] as ItemHeal;
+        if (healData == null)
+            return;
 
-        var text = healSlot.itemGameObj.GetComponentInChildren<TMP_Text>();
-        if (text != null)
-            text.text = item.name; // или просто ""
+        healSlot = new HealInventory(baseItem, healData);
+
+        healSlot.itemGameObj.GetComponent<Image>().sprite = healData.img;
+        UpdateHealSlotText();
     }
 
     public void OnHealSlotClicked()
     {
         if (currentID == -1)
         {
-            // В руке ничего — взять из healSlot
-            if (healSlot.id == 0 || healSlot.count == 0) return;
+            // Берем из слота
+            if (healSlot == null || healSlot.id == 0) return;
 
-            currentItem = CopyInventoryItem(healSlot);
+            currentItem = new HealInventory(
+                new ItemInventory { id = healSlot.id, count = healSlot.count },
+                data.items[healSlot.id] as ItemHeal
+            )
+            {
+                currentHeal = healSlot.currentHeal,
+                maxHeal = healSlot.maxHeal
+            };
 
+            // Очищаем слот
             healSlot.id = 0;
-            healSlot.count = 0;
-            healSlot.itemGameObj.GetComponent<Image>().sprite = healSlotDefaultSprite;
-            healSlot.itemGameObj.GetComponent<Image>().color = Color.white;
+            healSlot.currentHeal = 0;
+            healSlot.maxHeal = 0;
             UpdateHealSlotText();
 
             movingObject.gameObject.SetActive(true);
             movingObject.GetComponent<Image>().sprite = data.items[currentItem.id].img;
+            UpdateMovingObjectUI();
 
-            currentID = -2; // -2 означает "взято из оружейного слота"
+            currentID = -2;
         }
         else
         {
-            // Есть предмет в руке
-            if (!IsHeal(data.items[currentItem.id])) return;
+            // Кладем в слот
+            if (!(currentItem is HealInventory healItem)) return;
 
-            if (healSlot.id != 0 && healSlot.count > 0)
+            // Если в слоте уже есть предмет - вернуть его в инвентарь
+            if (healSlot.id != 0)
             {
-                int remaining = SearchForSameItem(data.items[healSlot.id], healSlot.count);
-                if (remaining > 0)
-                {
-                    // Если не удалось уместить всё — можно создать новый слот или сообщить игроку
-                    Debug.LogWarning("Не удалось полностью вернуть предмет из Heal-слота в инвентарь. Осталось: " + remaining);
-                }
+                int remaining = SearchForSameItem(data.items[healSlot.id], 1);
+                if (remaining > 0) Debug.Log("Не удалось вернуть предмет из слота");
             }
 
-            // Экипировать предмет из руки в слот
-            healSlot.id = currentItem.id;
-            healSlot.count = currentItem.count;
-            healSlot.itemGameObj.GetComponent<Image>().sprite = data.items[currentItem.id].img;
+            // Заполняем слот
+            healSlot = new HealInventory(
+                new ItemInventory { id = healItem.id, count = 1 },
+                data.items[healItem.id] as ItemHeal
+            ) 
+            {
+                currentHeal = healItem.currentHeal,
+                maxHeal = healItem.maxHeal
+            };
+
             UpdateHealSlotText();
 
-            // Очистить курсор
-            currentItem = new ItemInventory();
+            // Очищаем курсор
+            currentItem = null;
             movingObject.gameObject.SetActive(false);
             currentID = -1;
         }
     }
 
-    void UpdateHealSlotText()
+    public void UpdateHealSlotText()
     {
-        var text = healSlot.itemGameObj.GetComponentInChildren<TMP_Text>();
-        if (text != null)
-            text.text = healSlot.id == 0 ? "" : data.items[healSlot.id].name;
-    } 
+        if (healSlot == null || healSlot.id == 0)
+        {
+            // Очистить слот
+            healSlotObject.GetComponent<Image>().sprite = healSlotDefaultSprite;
+            var text = healSlotObject.GetComponentInChildren<TMP_Text>();
+            if (text != null) text.text = "";
+            return;
+        }
+
+        var textUI = healSlotObject.GetComponentInChildren<TMP_Text>();
+        if (textUI != null)
+        {
+            textUI.text = $"{data.items[healSlot.id].name} ({healSlot.currentHeal}/{healSlot.maxHeal})";
+        }
+
+        healSlotObject.GetComponent<Image>().sprite = data.items[healSlot.id].img;
+    }
+
 
 
     ///
@@ -168,86 +239,128 @@ public class Inventory : MonoBehaviour
         return false;
     }
 
-    public void RemoveArmor()
+    public void OnArmorDestroyed()
     {
-        armorSlot.id = 0;
-        armorSlot.count = 0;
+        // Сбрасываем слот брони
+        armorSlot = new ArmorInventory(
+            new ItemInventory { id = 0, itemGameObj = armorSlotObject },
+            new ItemArmor()
+        );
+
         armorSlot.itemGameObj.GetComponent<Image>().sprite = armorSlotDefaultSprite;
         UpdateArmorSlotText();
 
-        // Обновляем состояние брони в PlayerHealth
-        /*
-        PlayerHealth health = GetComponent<PlayerHealth>();
-        if (health != null) health.UpdateArmorFromInventory();
-        */
+        Debug.Log("Броня разрушена!");
     }
 
     public void EquipArmor(ItemData item)
     {
-        if (item == null || item.id == 0)
-            return;
+        ItemArmor armorItem = item as ItemArmor;
+        if (armorItem != null)
+        {
+            // Создаем ArmorInventory из обычного ItemInventory
+            armorSlot = new ArmorInventory(
+                new ItemInventory
+                {
+                    id = item.id,
+                    count = 1,
+                    itemGameObj = armorSlotObject
+                },
+                armorItem
+            );
 
-        armorSlot.id = item.id;
-        armorSlot.count = 1;
-        armorSlot.itemGameObj.GetComponent<Image>().sprite = item.img;
+            armorSlot.itemGameObj.GetComponent<Image>().sprite = item.img;
+            UpdateArmorSlotText();
 
-        var text = armorSlot.itemGameObj.GetComponentInChildren<TMP_Text>();
-        if (text != null)
-            text.text = item.name; // или просто ""
+            if (playerHealth != null)
+            {
+                playerHealth.EquipArmor(armorItem, armorSlot);
+            }
+        }
     }
 
     public void OnArmorSlotClicked()
     {
+        // Если «в руках» ничего, а в слоте брони что-то лежит:
         if (currentID == -1)
         {
-            // В руке ничего — взять из armorSlot
-            if (armorSlot.id == 0 || armorSlot.count == 0) return;
+            if (armorSlot.id == 0) return;
 
+            // Копируем ссылку в currentItem (чтобы вернуть обратно, если отпустит мышь):
             currentItem = CopyInventoryItem(armorSlot);
 
+            // Удаляем броню с персонажа: 
+            if (playerHealth != null)
+                playerHealth.RemoveArmor();
+
+            // Очищаем UI-слот (зелёный прямоугольник):
             armorSlot.id = 0;
             armorSlot.count = 0;
+            armorSlot.currentDurability = 0;
+            armorSlot.maxDurability = 0;
             armorSlot.itemGameObj.GetComponent<Image>().sprite = armorSlotDefaultSprite;
-            armorSlot.itemGameObj.GetComponent<Image>().color = Color.white;
             UpdateArmorSlotText();
 
+            // Начинаем «нести» броню за курсором:
             movingObject.gameObject.SetActive(true);
             movingObject.GetComponent<Image>().sprite = data.items[currentItem.id].img;
+            var txt = movingObject.GetComponentInChildren<TMP_Text>();
+            if (txt != null) txt.text = $"{(currentItem as ArmorInventory).currentDurability}/{(currentItem as ArmorInventory).maxDurability}";
 
-            currentID = -2; // -2 означает "взято из оружейного слота"
+            currentID = -2;
         }
         else
         {
-            // Есть предмет в руке
+            // Если в курсоре лежит броня (а не что-то другое):
             if (!IsArmor(data.items[currentItem.id])) return;
 
-            if (armorSlot.id != 0 && armorSlot.count > 0)
+            // Если в слоте была старая броня, вернём её в инвентарь:
+            if (armorSlot.id != 0)
             {
-                int remaining = SearchForSameItem(data.items[armorSlot.id], armorSlot.count);
-                if (remaining > 0)
-                {
-                    Debug.LogWarning("Не удалось полностью вернуть предмет из Armor-слота в инвентарь. Осталось: " + remaining);
-                }
+                int rem = SearchForSameItem(data.items[armorSlot.id], armorSlot.count);
+                if (rem > 0)
+                    Debug.LogWarning("Не удалось вернуть броню полностью. Осталось: " + rem);
+
+                if (playerHealth != null)
+                    playerHealth.RemoveArmor();
             }
 
-            // Экипировать предмет из руки в слот
-            armorSlot.id = currentItem.id;
-            armorSlot.count = currentItem.count;
+            // «Надеваем» броню из курсора в слот — но НЕ создаём новый ArmorInventory:
+            // Вместо этого копируем туда именно сохранённую в currentItem прочность:
+            ArmorInventory armorFromCursor = currentItem as ArmorInventory;
+            armorSlot.id = armorFromCursor.id;
+            armorSlot.count = armorFromCursor.count;
+            armorSlot.currentDurability = armorFromCursor.currentDurability;
+            armorSlot.maxDurability = armorFromCursor.maxDurability;
             armorSlot.itemGameObj.GetComponent<Image>().sprite = data.items[currentItem.id].img;
             UpdateArmorSlotText();
 
-            // Очистить курсор
+            // Передаём в PlayerHealth ту же самую «ячейку» с уже отредактированной прочностью:
+            if (playerHealth != null)
+                playerHealth.EquipArmor(data.items[armorSlot.id] as ItemArmor, armorSlot);
+
+            // Очищаем «курсор»
             currentItem = new ItemInventory();
             movingObject.gameObject.SetActive(false);
             currentID = -1;
         }
     }
 
-    void UpdateArmorSlotText()
+    public void UpdateArmorSlotText()
     {
         var text = armorSlot.itemGameObj.GetComponentInChildren<TMP_Text>();
         if (text != null)
-            text.text = armorSlot.id == 0 ? "" : data.items[armorSlot.id].name;
+        {
+            if (armorSlot.id != 0)
+            {
+                // Отображаем прочность: текущая/максимальная
+                text.text = $"{armorSlot.currentDurability}/{armorSlot.maxDurability}";
+            }
+            else
+            {
+                text.text = "";
+            }
+        }
     }
 
     ///
@@ -419,58 +532,178 @@ public class Inventory : MonoBehaviour
         return count;
     }
 
-    public void AddItem(int id, ItemData item, int count)
+    public void AddItem(int slotIndex, ItemData item, int count)
     {
-        if (id < 0 || id >= items.Count)
+        if (slotIndex < 0 || slotIndex >= items.Count)
         {
             Debug.LogError("Индекс вне диапазона списка items");
             return;
         }
-        var invItem = items[id];
-        if (invItem.itemGameObj == null)
+
+        GameObject cellGo = items[slotIndex].itemGameObj;
+        if (cellGo == null)
         {
             Debug.LogError("itemGameObj не назначен");
             return;
         }
 
-        invItem.id = item.id;
-        invItem.count = count;
-
-        var img = invItem.itemGameObj.GetComponent<Image>();
-        if (img != null)
+        if (item == null || item.id == 0 || count <= 0)
         {
-            img.sprite = item.img;
+            items[slotIndex] = new ItemInventory
+            {
+                id = 0,
+                count = 0,
+                itemGameObj = cellGo
+            };
+
+            var imgClear = cellGo.GetComponent<Image>();
+            if (imgClear != null)
+                imgClear.sprite = data.items[0].img;
+
+            var txtClear = cellGo.GetComponentInChildren<TMP_Text>();
+            if (txtClear != null)
+                txtClear.text = "";
+
+            return;
         }
 
-        //Debug.Log("HERE1");
-        if (invItem.itemGameObj.GetComponentInChildren<TMP_Text>() != null)
+        if (item is ItemArmor armorData)
         {
-            //Debug.Log("HERE2");
-            if (count > 0 && item.id != 0)
-            {
-                invItem.itemGameObj.GetComponentInChildren<TMP_Text>().text = count.ToString();
-            }
-            else
-            {
-                invItem.itemGameObj.GetComponentInChildren<TMP_Text>().text = "";
-            }
-        }
-    }
+            var newArmorSlot = new ArmorInventory(
+                new ItemInventory { id = item.id, count = 1, itemGameObj = cellGo },
+                armorData
+            );
 
-    public void AddInventoryItem(int id, ItemInventory invItem)
-    {
-        items[id].id = invItem.id;
-        items[id].count = invItem.count;
-        items[id].itemGameObj.GetComponent<Image>().sprite = data.items[invItem.id].img;
-        if (invItem.count > 0 && invItem.id != 0)
+            cellGo.GetComponent<Image>().sprite = item.img;
+            var txt = cellGo.GetComponentInChildren<TMP_Text>();
+            if (txt != null)
+                txt.text = $"{newArmorSlot.currentDurability}/{newArmorSlot.maxDurability}";
+
+            items[slotIndex] = newArmorSlot;
+        }
+        else if (item is ItemHeal healData) // Добавляем проверку для аптечки
         {
-            items[id].itemGameObj.GetComponentInChildren<TMP_Text>().text = invItem.count.ToString();
+            var newHealSlot = new HealInventory(
+                new ItemInventory { id = item.id, count = 1, itemGameObj = cellGo },
+                healData
+            );
+
+            cellGo.GetComponent<Image>().sprite = item.img;
+            var txt = cellGo.GetComponentInChildren<TMP_Text>();
+            if (txt != null)
+                txt.text = $"{newHealSlot.currentHeal}/{newHealSlot.maxHeal}";
+
+            items[slotIndex] = newHealSlot;
         }
         else
         {
-            items[id].itemGameObj.GetComponentInChildren<TMP_Text>().text = "";
+            var newItem = new ItemInventory
+            {
+                id = item.id,
+                count = count,
+                itemGameObj = cellGo
+            };
+
+            cellGo.GetComponent<Image>().sprite = item.img;
+            var txt = cellGo.GetComponentInChildren<TMP_Text>();
+            if (txt != null)
+                txt.text = (count > 1 ? count.ToString() : "");
+
+            items[slotIndex] = newItem;
         }
     }
+
+
+    public void AddInventoryItem(int slotIndex, ItemInventory invItem)
+    {
+        if (slotIndex < 0 || slotIndex >= items.Count)
+        {
+            Debug.LogError("Индекс вне диапазона списка items");
+            return;
+        }
+
+        GameObject cellGo = items[slotIndex].itemGameObj;
+        if (cellGo == null)
+        {
+            Debug.LogError("itemGameObj не назначен");
+            return;
+        }
+
+        if (invItem is ArmorInventory armorOld)
+        {
+            ItemData template = data.items[armorOld.id];
+            if (template is ItemArmor armorData)
+            {
+                ArmorInventory newArmorSlot = new ArmorInventory(
+                    new ItemInventory
+                    {
+                        id = armorOld.id,
+                        count = armorOld.count,
+                        itemGameObj = cellGo
+                    },
+                    armorData
+                );
+                newArmorSlot.currentDurability = armorOld.currentDurability;
+                newArmorSlot.maxDurability = armorOld.maxDurability;
+
+                cellGo.GetComponent<Image>().sprite = armorData.img;
+                var txt = cellGo.GetComponentInChildren<TMP_Text>();
+                if (txt != null)
+                    txt.text = $"{newArmorSlot.currentDurability}/{newArmorSlot.maxDurability}";
+
+                items[slotIndex] = newArmorSlot;
+                return;
+            }
+            else
+            {
+                Debug.LogError($"Item с id={armorOld.id} не является ItemArmor");
+            }
+        }
+        else if (invItem is HealInventory healOld)
+        {
+            ItemData template = data.items[healOld.id];
+            if (template is ItemHeal healData)
+            {
+                HealInventory newHealSlot = new HealInventory(
+                    new ItemInventory
+                    {
+                        id = healOld.id,
+                        count = healOld.count,
+                        itemGameObj = cellGo // Сохраняем ссылку на объект!
+                    },
+                    healData
+                )
+                {
+                    currentHeal = healOld.currentHeal,
+                    maxHeal = healOld.maxHeal
+                };
+
+                cellGo.GetComponent<Image>().sprite = healData.img;
+                var txt = cellGo.GetComponentInChildren<TMP_Text>();
+                if (txt != null) txt.text = $"{newHealSlot.currentHeal}/{newHealSlot.maxHeal}";
+
+                items[slotIndex] = newHealSlot;
+                return;
+            }
+        }
+
+        // Обычный ItemInventory
+        ItemInventory newItem = new ItemInventory
+        {
+            id = invItem.id,
+            count = invItem.count,
+            itemGameObj = cellGo
+        };
+
+        cellGo.GetComponent<Image>().sprite = data.items[invItem.id].img;
+        var txt2 = cellGo.GetComponentInChildren<TMP_Text>();
+        if (txt2 != null)
+            txt2.text = (invItem.count > 1 ? invItem.count.ToString() : "");
+
+        items[slotIndex] = newItem;
+    }
+
+
 
     public void AddGraphics()
     {
@@ -499,29 +732,103 @@ public class Inventory : MonoBehaviour
     {
         for (int i = 0; i < maxCount; i++)
         {
+            var go = items[i].itemGameObj;
+            var imgComp = go.GetComponent<Image>();
+            var txtComp = go.GetComponentInChildren<TMP_Text>();
+
+            // Обновляем иконку (даже если id == 0, data.items[0].img — «пустая» картинка)
+            if (imgComp != null)
+                imgComp.sprite = data.items[items[i].id].img;
+
+            // Если слот не пустой (id != 0 И count > 0)
             if (items[i].id != 0 && items[i].count > 0)
             {
-                items[i].itemGameObj.GetComponentInChildren<TMP_Text>().text = items[i].count.ToString();
+                // Проверяем тип предмета
+                if (items[i] is ArmorInventory armorSlot)
+                {
+                    if (txtComp != null)
+                        txtComp.text = $"{armorSlot.currentDurability}/{armorSlot.maxDurability}";
+                }
+                else if (items[i] is HealInventory healSlot)
+                {
+                    if (txtComp != null)
+                        txtComp.text = $"{healSlot.currentHeal}/{healSlot.maxHeal}";
+                }
+                else
+                {
+                    if (txtComp != null)
+                        txtComp.text = items[i].count > 1 ? items[i].count.ToString() : "";
+                }
             }
             else
             {
-                items[i].itemGameObj.GetComponentInChildren<TMP_Text>().text = "";
+                // Слот пустой — очищаем текст
+                if (txtComp != null)
+                    txtComp.text = "";
             }
-            items[i].itemGameObj.GetComponent<Image>().sprite = data.items[items[i].id].img;
+        }
+    }
+
+    /// <summary>
+    /// Обновляет иконку и текст в ячейке слота оружия.
+    /// </summary>
+    public void UpdateWeaponSlotUI()
+    {
+        // Получаем Image и TMP_Text прямо в нужном GameObject’е
+        var img = weaponSlotObject.GetComponent<Image>();
+        var txt = weaponSlotObject.GetComponentInChildren<TMP_Text>();
+
+        if (weaponSlot.id != 0 && weaponSlot.count > 0)
+        {
+            // Если в слоте есть предмет — рисуем его иконку и (при необходимости) количество
+            var dataItem = data.items[weaponSlot.id];
+            if (img != null)
+                img.sprite = dataItem.img;
+
+            if (txt != null)
+                txt.text = (weaponSlot.count > 1 ? weaponSlot.count.ToString() : "");
+        }
+        else
+        {
+            // Слот пустой — рисуем «дефолтную» картинку и очищаем текст
+            if (img != null)
+                img.sprite = weaponSlotDefaultSprite;
+
+            if (txt != null)
+                txt.text = "";
         }
     }
 
     public void UpdateMovingObjectUI()
     {
         TMP_Text text = movingObject.GetComponentInChildren<TMP_Text>();
-        if (text != null)
+        if (text == null) return;
+
+        if (currentItem is ArmorInventory armorCursor)
         {
+            // Для брони показываем текущую/максимальную прочность
+            text.text = $"{armorCursor.currentDurability}/{armorCursor.maxDurability}";
+        }
+        else if (currentItem is HealInventory healCursor)
+        {
+            // Для аптечки показываем текущее и максимальное лечение
+            text.text = $"{healCursor.currentHeal}/{healCursor.maxHeal}";
+        }
+        else
+        {
+            // Для обычных предметов показываем количество
             text.text = currentItem.count > 1 ? currentItem.count.ToString() : "";
         }
     }
 
+
+
     public void SelectObject()
     {
+        if (currentItem is HealInventory healCursor)
+        {
+            Debug.Log($"Moving heal item: {healCursor.currentHeal}/{healCursor.maxHeal}");
+        }
         if (!int.TryParse(es.currentSelectedGameObject.name, out int index))
         {
             Debug.Log($"cant pars = {es.currentSelectedGameObject.name}");
@@ -532,17 +839,20 @@ public class Inventory : MonoBehaviour
         ItemInventory cursorItem = currentItem;      // предмет на курсоре
 
         // Если курсор пустой — просто берем предмет из слота
+
         if (currentID == -1)
         {
-            //Debug.Log($"currentItem.id = {currentItem.id}   selectedID = {selectedID} item = {items[selectedID].id}");
             if (items[selectedID].id == 0) return;
+
             currentID = selectedID;
-            currentItem = CopyInventoryItem(slotItem);
+            currentItem = CopyInventoryItem(items[selectedID]); // Копируем с сохранением ссылки
+
+            // Очищаем слот, но сохраняем его UI-объект
+            AddItem(currentID, data.items[0], 0);
+
             movingObject.gameObject.SetActive(true);
             movingObject.GetComponent<Image>().sprite = data.items[currentItem.id].img;
             UpdateMovingObjectUI();
-            // Очищаем слот
-            AddItem(currentID, data.items[0], 0);
         }
         else
         {
@@ -611,14 +921,55 @@ public class Inventory : MonoBehaviour
 
     public ItemInventory CopyInventoryItem(ItemInventory old)
     {
-        ItemInventory New = new ItemInventory();
-        
-        New.id = old.id;
-        New.itemGameObj = old.itemGameObj;
-        New.count = old.count;
+        // Для брони
+        if (old is ArmorInventory armorOld)
+        {
+            ArmorInventory newArmor = new ArmorInventory(
+                new ItemInventory
+                {
+                    id = armorOld.id,
+                    count = armorOld.count,
+                    itemGameObj = armorOld.itemGameObj // Сохраняем ссылку!
+                },
+                data.items[armorOld.id] as ItemArmor
+            )
+            {
+                currentDurability = armorOld.currentDurability,
+                maxDurability = armorOld.maxDurability
+            };
+            return newArmor;
+        }
 
+        // Для аптечек
+        if (old is HealInventory healOld)
+        {
+            HealInventory newHeal = new HealInventory(
+                new ItemInventory
+                {
+                    id = healOld.id,
+                    count = healOld.count,
+                    itemGameObj = healOld.itemGameObj // Сохраняем ссылку!
+                },
+                data.items[healOld.id] as ItemHeal
+            )
+            {
+                currentHeal = healOld.currentHeal,
+                maxHeal = healOld.maxHeal
+            };
+            return newHeal;
+        }
+
+        // Для обычных предметов
+        ItemInventory New = new ItemInventory
+        {
+            id = old.id,
+            count = old.count,
+            itemGameObj = old.itemGameObj // Сохраняем ссылку!
+        };
         return New;
     }
+
+
 }
 
 [System.Serializable]
@@ -628,4 +979,38 @@ public class ItemInventory
     public int count;
     public GameObject itemGameObj;
     public TMP_Text countText;  // заменил Text на TMP_Text
+}
+
+[System.Serializable]
+public class ArmorInventory : ItemInventory
+{
+    public int currentDurability; // Текущая прочность брони
+    public int maxDurability;     // Максимальная прочность
+
+    // Конструктор для копирования базового предмета
+    public ArmorInventory(ItemInventory baseItem, ItemArmor armorData)
+    {
+        id = baseItem.id;
+        count = baseItem.count;
+        itemGameObj = baseItem.itemGameObj;
+        currentDurability = armorData.currentHP;
+        maxDurability = armorData.maxHP;
+    }
+}
+
+
+public class HealInventory : ItemInventory
+{
+    public int currentHeal; // Текущая прочность аптечки
+    public int maxHeal;     // Максимальная прочность
+
+    // Конструктор для копирования базового предмета аптечки
+    public HealInventory(ItemInventory baseItem, ItemHeal healData)
+    {
+        id = baseItem.id;
+        count = baseItem.count;
+        itemGameObj = baseItem.itemGameObj;
+        currentHeal = healData.currentHeal;
+        maxHeal = healData.maxHeal;
+    }
 }

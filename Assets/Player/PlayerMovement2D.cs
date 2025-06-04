@@ -3,6 +3,7 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerMovement2D : MonoBehaviour
 {
+    public bool canMove = true;
     [Header("Ссылки")]
     [Tooltip("Ссылка на Inventory, чтобы брать текущий вес")]
     public Inventory inventory;
@@ -80,6 +81,20 @@ public class PlayerMovement2D : MonoBehaviour
 
     void FixedUpdate()
     {
+        /*
+        if (!canMove)
+        {
+            rb.linearVelocity = Vector2.zero; // мгновенно останавливаем движение
+            return;
+        }
+        */
+        if (!canMove)
+        {
+            currentSpeed = minSpeed;
+        }
+
+
+
         // Применяем движение через Rigidbody2D:
         //   targetVelocity — желаемая скорость (Vector2)
         //   rb.velocity    — текущая скорость (Vector2)
@@ -87,11 +102,11 @@ public class PlayerMovement2D : MonoBehaviour
         // Если inputDirection == Vector2.zero, то targetVelocity = Vector2.zero,
         // и MoveTowards плавно уменьшит rb.velocity до нуля с шагом currentAccel * Time.fixedDeltaTime.
 
-        Vector2 targetVelocity = inputDirection * currentSpeed;
+            Vector2 targetVelocity = inputDirection * currentSpeed;
         Vector2 newVelocity = Vector2.MoveTowards(rb.linearVelocity,
                                                   targetVelocity,
                                                   currentAccel * Time.fixedDeltaTime);
-        Debug.Log($"newVelocity = {newVelocity}");
+        ///Debug.Log($"newVelocity = {newVelocity}");
         rb.linearVelocity = newVelocity;
     }
 }
