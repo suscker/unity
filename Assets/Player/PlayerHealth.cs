@@ -114,7 +114,7 @@ public class PlayerHealth : MonoBehaviour
                 ItemHeal itemHeal = inventory.data.items[healItem.id] as ItemHeal;
                 if (itemHeal == null)
                 {
-                    Debug.LogError("Предмет не является ItemHeal.");
+                    Debug.Log("Предмет не является ItemHeal.");
                     return;
                 }
 

@@ -559,6 +559,7 @@ public class Inventory : MonoBehaviour
         }
     }
 
+
     public int SearchForSameItem(ItemData item, int count)
     {
         for(int i = 0; i < maxCount; i++)
