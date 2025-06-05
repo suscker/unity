@@ -14,7 +14,7 @@ public class Inventory : MonoBehaviour
     public List<ItemInventory> items = new List<ItemInventory>();
 
     [Header("UI")]
-    [Tooltip("Ссылка на Text, где показываем вес (в кг)")]
+    [Tooltip("пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ Text, пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ (пїЅ пїЅпїЅ)")]
     public TMP_Text weightText;
 
     public GameObject gameObjShow;
@@ -49,7 +49,7 @@ public class Inventory : MonoBehaviour
     public Sprite healSlotDefaultSprite;
 
     [Header("External Inventories")]
-    public GameObject crateInventoryUI; // Ссылка на UI инвентаря ящика
+    public GameObject crateInventoryUI; // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ UI пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 
 
     public void Start()
@@ -81,9 +81,9 @@ public class Inventory : MonoBehaviour
 
 
         /*
-         * это 
-         * для
-         * теста
+         * пїЅпїЅпїЅ 
+         * пїЅпїЅпїЅ
+         * пїЅпїЅпїЅпїЅпїЅ
         */
         ///Debug.Log("Ya tyt");
         for (int i = 0; i < maxCount; i++)
@@ -91,18 +91,18 @@ public class Inventory : MonoBehaviour
             int number = Random.Range(0, data.items.Count);
             ItemData rndItem = data.items[number];
 
-            // Если выпала броня — сложим в ячейку ArmorInventory и зададим ей random durability
+            // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ ArmorInventory пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ random durability
             if (rndItem is ItemArmor armorData)
             {
                 AddItem(i, rndItem, 1);
 
-                // и лишь после этого устанавливаем случайную прочность (если нужно)
+                // пїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ)
                 if (items[i] is ArmorInventory aSlot)
                 {
                     aSlot.currentDurability = Random.Range(1, aSlot.maxDurability + 1);
 
-                    // И снова обновляем текст (но на самом деле это необязательно—
-                    // AddItem уже нарисовал исходную, а здесь мы просто «подправляем»):
+                    // пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ (пїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+                    // AddItem пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ):
                     var txt = aSlot.itemGameObj.GetComponentInChildren<TMP_Text>();
                     if (txt != null)
                         txt.text = $"{aSlot.currentDurability}/{aSlot.maxDurability}";
@@ -110,7 +110,7 @@ public class Inventory : MonoBehaviour
             }
             else
             {
-                // Обычный предмет
+                // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
                 int rndCount = rndItem.maxCountInStack > 1
                                ? Random.Range(1, rndItem.maxCountInStack)
                                : 1;
@@ -153,7 +153,7 @@ public class Inventory : MonoBehaviour
 
     public void OnHealDestroyed()
     {
-        // Сбрасываем слот аптечки
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         healSlot = new HealInventory(
             new ItemInventory { id = 0, itemGameObj = healSlotObject },
             new ItemHeal()
@@ -162,7 +162,7 @@ public class Inventory : MonoBehaviour
         healSlot.itemGameObj.GetComponent<Image>().sprite = healSlotDefaultSprite;
         UpdateHealSlotText();
 
-        Debug.Log("Аптечка потрачена!");
+        Debug.Log("пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ!");
     }
 
     public void EquipHeal(ItemInventory baseItem)
@@ -184,7 +184,7 @@ public class Inventory : MonoBehaviour
     {
         if (currentID == -1)
         {
-            // Берем из слота
+            // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
             if (healSlot == null || healSlot.id == 0) return;
 
             currentItem = new HealInventory(
@@ -196,7 +196,7 @@ public class Inventory : MonoBehaviour
                 maxHeal = healSlot.maxHeal
             };
 
-            // Очищаем слот
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
             healSlot.id = 0;
             healSlot.currentHeal = 0;
             healSlot.maxHeal = 0;
@@ -210,17 +210,17 @@ public class Inventory : MonoBehaviour
         }
         else
         {
-            // Кладем в слот
+            // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ
             if (!(currentItem is HealInventory healItem)) return;
 
-            // Если в слоте уже есть предмет - вернуть его в инвентарь
+            // пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ - пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             if (healSlot.id != 0)
             {
                 int remaining = SearchForSameItem(data.items[healSlot.id], 1);
-                if (remaining > 0) Debug.Log("Не удалось вернуть предмет из слота");
+                if (remaining > 0) Debug.Log("пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ");
             }
 
-            // Заполняем слот
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
             healSlot = new HealInventory(
                 new ItemInventory { id = healItem.id, count = 1 },
                 data.items[healItem.id] as ItemHeal
@@ -232,7 +232,7 @@ public class Inventory : MonoBehaviour
 
             UpdateHealSlotText();
 
-            // Очищаем курсор
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
             currentItem = null;
             movingObject.gameObject.SetActive(false);
             currentID = -1;
@@ -243,7 +243,7 @@ public class Inventory : MonoBehaviour
     {
         if (healSlot == null || healSlot.id == 0)
         {
-            // Очистить слот
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
             healSlotObject.GetComponent<Image>().sprite = healSlotDefaultSprite;
             var text = healSlotObject.GetComponentInChildren<TMP_Text>();
             if (text != null) text.text = "";
@@ -270,7 +270,7 @@ public class Inventory : MonoBehaviour
 
     public void OnArmorDestroyed()
     {
-        // Сбрасываем слот брони
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
         armorSlot = new ArmorInventory(
             new ItemInventory { id = 0, itemGameObj = armorSlotObject },
             new ItemArmor()
@@ -279,7 +279,7 @@ public class Inventory : MonoBehaviour
         armorSlot.itemGameObj.GetComponent<Image>().sprite = armorSlotDefaultSprite;
         UpdateArmorSlotText();
 
-        Debug.Log("Броня разрушена!");
+        Debug.Log("пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ!");
     }
 
     public void EquipArmor(ItemData item)
@@ -287,7 +287,7 @@ public class Inventory : MonoBehaviour
         ItemArmor armorItem = item as ItemArmor;
         if (armorItem != null)
         {
-            // Создаем ArmorInventory из обычного ItemInventory
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ ArmorInventory пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ ItemInventory
             armorSlot = new ArmorInventory(
                 new ItemInventory
                 {
@@ -310,19 +310,19 @@ public class Inventory : MonoBehaviour
 
     public void OnArmorSlotClicked()
     {
-        // Если «в руках» ничего, а в слоте брони что-то лежит:
+        // пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ-пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ:
         if (currentID == -1)
         {
             if (armorSlot.id == 0) return;
 
-            // Копируем ссылку в currentItem (чтобы вернуть обратно, если отпустит мышь):
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ currentItem (пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ):
             currentItem = CopyInventoryItem(armorSlot);
 
-            // Удаляем броню с персонажа: 
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: 
             if (playerHealth != null)
                 playerHealth.RemoveArmor();
 
-            // Очищаем UI-слот (зелёный прямоугольник):
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ UI-пїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ):
             armorSlot.id = 0;
             armorSlot.count = 0;
             armorSlot.currentDurability = 0;
@@ -330,7 +330,7 @@ public class Inventory : MonoBehaviour
             armorSlot.itemGameObj.GetComponent<Image>().sprite = armorSlotDefaultSprite;
             UpdateArmorSlotText();
 
-            // Начинаем «нести» броню за курсором:
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ:
             movingObject.gameObject.SetActive(true);
             movingObject.GetComponent<Image>().sprite = data.items[currentItem.id].img;
             var txt = movingObject.GetComponentInChildren<TMP_Text>();
@@ -340,22 +340,22 @@ public class Inventory : MonoBehaviour
         }
         else
         {
-            // Если в курсоре лежит броня (а не что-то другое):
+            // пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ (пїЅ пїЅпїЅ пїЅпїЅпїЅ-пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ):
             if (!IsArmor(data.items[currentItem.id])) return;
 
-            // Если в слоте была старая броня, вернём её в инвентарь:
+            // пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ:
             if (armorSlot.id != 0)
             {
                 int rem = SearchForSameItem(data.items[armorSlot.id], armorSlot.count);
                 if (rem > 0)
-                    Debug.LogWarning("Не удалось вернуть броню полностью. Осталось: " + rem);
+                    Debug.LogWarning("пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ. пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: " + rem);
 
                 if (playerHealth != null)
                     playerHealth.RemoveArmor();
             }
 
-            // «Надеваем» броню из курсора в слот — но НЕ создаём новый ArmorInventory:
-            // Вместо этого копируем туда именно сохранённую в currentItem прочность:
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ ArmorInventory:
+            // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ currentItem пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ:
             ArmorInventory armorFromCursor = currentItem as ArmorInventory;
             armorSlot.id = armorFromCursor.id;
             armorSlot.count = armorFromCursor.count;
@@ -364,11 +364,11 @@ public class Inventory : MonoBehaviour
             armorSlot.itemGameObj.GetComponent<Image>().sprite = data.items[currentItem.id].img;
             UpdateArmorSlotText();
 
-            // Передаём в PlayerHealth ту же самую «ячейку» с уже отредактированной прочностью:
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ PlayerHealth пїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ:
             if (playerHealth != null)
                 playerHealth.EquipArmor(data.items[armorSlot.id] as ItemArmor, armorSlot);
 
-            // Очищаем «курсор»
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             currentItem = new ItemInventory();
             movingObject.gameObject.SetActive(false);
             currentID = -1;
@@ -382,7 +382,7 @@ public class Inventory : MonoBehaviour
         {
             if (armorSlot.id != 0)
             {
-                // Отображаем прочность: текущая/максимальная
+                // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: пїЅпїЅпїЅпїЅпїЅпїЅпїЅ/пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
                 text.text = $"{armorSlot.currentDurability}/{armorSlot.maxDurability}";
             }
             else
@@ -411,25 +411,26 @@ public class Inventory : MonoBehaviour
 
         var text = weaponSlot.itemGameObj.GetComponentInChildren<TMP_Text>();
         if (text != null)
-            text.text = item.name; // или просто ""
+            text.text = item.name; // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ ""
     }
 
     public void OnWeaponSlotClicked()
     {
+        Debug.Log("Weapon slot clicked!");
         if (currentID == -1)
         {
-            // В руке ничего - взять из weaponSlot
+            // пїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ - пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ weaponSlot
             if (weaponSlot.id == 0) return;
 
             currentItem = CopyInventoryItem(weaponSlot);
 
-            // Очищаем слот
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
             weaponSlot = new WeaponInventory(
                 new ItemInventory { id = 0, itemGameObj = weaponSlotObject },
                 null
             );
 
-            UpdateWeaponSlotUI(); // Используем метод обновления UI
+            UpdateWeaponSlotUI(); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ UI
 
             movingObject.gameObject.SetActive(true);
             movingObject.GetComponent<Image>().sprite = data.items[currentItem.id].img;
@@ -439,10 +440,10 @@ public class Inventory : MonoBehaviour
         }
         else
         {
-            // Есть предмет в руке
+            // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ
             if (!(data.items[currentItem.id] is WeaponItemData)) return;
 
-            // Если в слоте уже есть предмет - вернуть его в инвентарь
+            // пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ - пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             if (weaponSlot.id != 0)
             {
                 int freeIndex = FindFreeSlot();
@@ -452,24 +453,24 @@ public class Inventory : MonoBehaviour
                 }
                 else
                 {
-                    Debug.LogWarning("Инвентарь полон! Не могу вернуть оружие.");
+                    Debug.LogWarning("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ! пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.");
                     return;
                 }
             }
 
-            // Экипировать оружие (FIXED: сохраняем текущие патроны)
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ (FIXED: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
             WeaponItemData weaponData = data.items[currentItem.id] as WeaponItemData;
             weaponSlot = new WeaponInventory(
                 new ItemInventory
                 {
                     id = currentItem.id,
                     count = 1,
-                    itemGameObj = weaponSlotObject // Критически важно!
+                    itemGameObj = weaponSlotObject // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ!
                 },
                 weaponData
             );
 
-            // Сохраняем текущие патроны
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             if (currentItem is WeaponInventory weaponItem)
             {
                 weaponSlot.currentAmmo = weaponItem.currentAmmo;
@@ -479,9 +480,9 @@ public class Inventory : MonoBehaviour
                 weaponSlot.currentAmmo = weaponData.magazineSize;
             }
 
-            UpdateWeaponSlotUI(); // Используем метод обновления UI
+            UpdateWeaponSlotUI(); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ UI
 
-            // Очистить курсор
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
             currentItem = new ItemInventory();
             movingObject.gameObject.SetActive(false);
             currentID = -1;
@@ -534,13 +535,13 @@ public class Inventory : MonoBehaviour
     public float GetTotalWeightInKg()
     {
         float totalWeight = GetTotalWeightInGrams() / 1000f;
-        weightText.text = $"{totalWeight:F1} кг";
+        weightText.text = $"{totalWeight:F1} kg";
         return totalWeight;
     }
 
     void Update()
     {
-        // Открытие/закрытие инвентаря по клавише I
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ/пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ I
         if (Input.GetKeyDown(KeyCode.I))
         {
             bool isActive = !backGround.activeSelf;
@@ -552,7 +553,7 @@ public class Inventory : MonoBehaviour
             }
         }
 
-        // Перемещение предмета за курсором
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         if (currentID != -1)
         {
             MoveObject();
@@ -600,14 +601,14 @@ public class Inventory : MonoBehaviour
     {
         if (slotIndex < 0 || slotIndex >= items.Count)
         {
-            Debug.LogError("Индекс вне диапазона списка items");
+            Debug.LogError("пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ items");
             return;
         }
 
         GameObject cellGo = items[slotIndex].itemGameObj;
         if (cellGo == null)
         {
-            Debug.LogError("itemGameObj не назначен");
+            Debug.LogError("itemGameObj пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ");
             return;
         }
 
@@ -659,7 +660,7 @@ public class Inventory : MonoBehaviour
 
             items[slotIndex] = newWeaponSlot;
         }
-        else if (item is ItemHeal healData) // Добавляем проверку для аптечки
+        else if (item is ItemHeal healData) // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         {
             var newHealSlot = new HealInventory(
                 new ItemInventory { id = item.id, count = 1, itemGameObj = cellGo },
@@ -696,14 +697,14 @@ public class Inventory : MonoBehaviour
     {
         if (slotIndex < 0 || slotIndex >= items.Count)
         {
-            Debug.LogError("Индекс вне диапазона списка items");
+            Debug.LogError("пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ items");
             return;
         }
 
         GameObject cellGo = items[slotIndex].itemGameObj;
         if (cellGo == null)
         {
-            Debug.LogError("itemGameObj не назначен");
+            Debug.LogError("itemGameObj пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ");
             return;
         }
 
@@ -734,7 +735,7 @@ public class Inventory : MonoBehaviour
             }
             else
             {
-                Debug.LogError($"Item с id={armorOld.id} не является ItemArmor");
+                Debug.LogError($"Item пїЅ id={armorOld.id} пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ ItemArmor");
             }
         }
         else if (invItem is WeaponInventory weaponOld)
@@ -775,7 +776,7 @@ public class Inventory : MonoBehaviour
                     {
                         id = healOld.id,
                         count = healOld.count,
-                        itemGameObj = cellGo // Сохраняем ссылку на объект!
+                        itemGameObj = cellGo // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ!
                     },
                     healData
                 )
@@ -793,7 +794,7 @@ public class Inventory : MonoBehaviour
             }
         }
 
-        // Обычный ItemInventory
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ ItemInventory
         ItemInventory newItem = new ItemInventory
         {
             id = invItem.id,
@@ -842,14 +843,14 @@ public class Inventory : MonoBehaviour
             var imgComp = go.GetComponent<Image>();
             var txtComp = go.GetComponentInChildren<TMP_Text>();
 
-            // Обновляем иконку (даже если id == 0, data.items[0].img — «пустая» картинка)
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ id == 0, data.items[0].img пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
             if (imgComp != null)
                 imgComp.sprite = data.items[items[i].id].img;
 
-            // Если слот не пустой (id != 0 И count > 0)
+            // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ (id != 0 пїЅ count > 0)
             if (items[i].id != 0 && items[i].count > 0)
             {
-                // Проверяем тип предмета
+                // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
                 if (items[i] is WeaponInventory weaponSlot)
                 {
                     if (txtComp != null)
@@ -873,7 +874,7 @@ public class Inventory : MonoBehaviour
             }
             else
             {
-                // Слот пустой — очищаем текст
+                // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
                 if (txtComp != null)
                     txtComp.text = "";
             }
@@ -881,7 +882,7 @@ public class Inventory : MonoBehaviour
     }
 
     /// <summary>
-    /// Обновляет иконку и текст в ячейке слота оружия.
+    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.
     /// </summary>
     public void UpdateWeaponSlotUI()
     {
@@ -910,17 +911,17 @@ public class Inventory : MonoBehaviour
         }
         else if (currentItem is ArmorInventory armorCursor)
         {
-            // Для брони показываем текущую/максимальную прочность
+            // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ/пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             text.text = $"{armorCursor.currentDurability}/{armorCursor.maxDurability}";
         }
         else if (currentItem is HealInventory healCursor)
         {
-            // Для аптечки показываем текущее и максимальное лечение
+            // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             text.text = $"{healCursor.currentHeal}/{healCursor.maxHeal}";
         }
         else
         {
-            // Для обычных предметов показываем количество
+            // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             text.text = currentItem.count > 1 ? currentItem.count.ToString() : "";
         }
     }
@@ -947,19 +948,19 @@ public class Inventory : MonoBehaviour
             return;
         }
         int selectedID = int.Parse(es.currentSelectedGameObject.name);
-        ItemInventory slotItem = items[selectedID];  // предмет в выбранной ячейке
-        ItemInventory cursorItem = currentItem;      // предмет на курсоре
+        ItemInventory slotItem = items[selectedID];  // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+        ItemInventory cursorItem = currentItem;      // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
-        // Если курсор пустой — просто берем предмет из слота
+        // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 
         if (currentID == -1)
         {
             if (items[selectedID].id == 0) return;
 
             currentID = selectedID;
-            currentItem = CopyInventoryItem(items[selectedID]); // Копируем с сохранением ссылки
+            currentItem = CopyInventoryItem(items[selectedID]); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 
-            // Очищаем слот, но сохраняем его UI-объект
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ, пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ UI-пїЅпїЅпїЅпїЅпїЅпїЅ
             AddItem(currentID, data.items[0], 0);
 
             movingObject.gameObject.SetActive(true);
@@ -968,7 +969,7 @@ public class Inventory : MonoBehaviour
         }
         else
         {
-            // Если предметы одинаковые и не пустые — пытаемся сложить
+            // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             if (cursorItem.id == slotItem.id && cursorItem.id != 0)
             {
                 int maxStack = data.items[cursorItem.id].maxCountInStack;
@@ -976,11 +977,11 @@ public class Inventory : MonoBehaviour
 
                 if (totalCount <= maxStack)
                 {
-                    // Помещаем все в слот
+                    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ
                     slotItem.count = totalCount;
                     AddInventoryItem(selectedID, slotItem);
 
-                    // Очистить курсор
+                    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
                     currentID = -1;
                     currentItem = new ItemInventory();
                     movingObject.gameObject.SetActive(false);
@@ -988,14 +989,14 @@ public class Inventory : MonoBehaviour
                 }
                 else
                 {
-                    // Помещаем максимум в слот, остальное оставляем в курсе
+                    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ
                     slotItem.count = maxStack;
                     AddInventoryItem(selectedID, slotItem);
 
                     cursorItem.count = totalCount - maxStack;
                     currentItem = cursorItem;
 
-                    // Курсор остается активным с остатком
+                    // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
                     currentID = selectedID;
                     movingObject.GetComponent<Image>().sprite = data.items[currentItem.id].img;
                     UpdateMovingObjectUI();
@@ -1003,7 +1004,7 @@ public class Inventory : MonoBehaviour
             }
             else
             {
-                // Предметы разные — меняем местами
+                // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
                 ItemInventory temp = CopyInventoryItem(slotItem);
 
                 AddInventoryItem(selectedID, currentItem);
@@ -1034,7 +1035,7 @@ public class Inventory : MonoBehaviour
     public ItemInventory CopyInventoryItem(ItemInventory old)
     {
 
-        // Для оружия
+        // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         if (old is WeaponInventory weaponOld)
         {
             WeaponInventory newWeapon = new WeaponInventory(
@@ -1052,7 +1053,7 @@ public class Inventory : MonoBehaviour
             };
             return newWeapon;
         }
-        // Для брони
+        // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
         if (old is ArmorInventory armorOld)
         {
             ArmorInventory newArmor = new ArmorInventory(
@@ -1060,7 +1061,7 @@ public class Inventory : MonoBehaviour
                 {
                     id = armorOld.id,
                     count = armorOld.count,
-                    itemGameObj = armorOld.itemGameObj // Сохраняем ссылку!
+                    itemGameObj = armorOld.itemGameObj // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ!
                 },
                 data.items[armorOld.id] as ItemArmor
             )
@@ -1071,7 +1072,7 @@ public class Inventory : MonoBehaviour
             return newArmor;
         }
 
-        // Для аптечек
+        // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         if (old is HealInventory healOld)
         {
             HealInventory newHeal = new HealInventory(
@@ -1079,7 +1080,7 @@ public class Inventory : MonoBehaviour
                 {
                     id = healOld.id,
                     count = healOld.count,
-                    itemGameObj = healOld.itemGameObj // Сохраняем ссылку!
+                    itemGameObj = healOld.itemGameObj // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ!
                 },
                 data.items[healOld.id] as ItemHeal
             )
@@ -1090,12 +1091,12 @@ public class Inventory : MonoBehaviour
             return newHeal;
         }
 
-        // Для обычных предметов
+        // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         ItemInventory New = new ItemInventory
         {
             id = old.id,
             count = old.count,
-            itemGameObj = old.itemGameObj // Сохраняем ссылку!
+            itemGameObj = old.itemGameObj // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ!
         };
         return New;
     }
@@ -1109,16 +1110,16 @@ public class ItemInventory
     public int id;
     public int count;
     public GameObject itemGameObj;
-    public TMP_Text countText;  // заменил Text на TMP_Text
+    public TMP_Text countText;  // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ Text пїЅпїЅ TMP_Text
 }
 
 [System.Serializable]
 public class ArmorInventory : ItemInventory
 {
-    public int currentDurability; // Текущая прочность брони
-    public int maxDurability;     // Максимальная прочность
+    public int currentDurability; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+    public int maxDurability;     // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
-    // Конструктор для копирования базового предмета
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     public ArmorInventory(ItemInventory baseItem, ItemArmor armorData)
     {
         id = baseItem.id;
@@ -1132,10 +1133,10 @@ public class ArmorInventory : ItemInventory
 [System.Serializable]
 public class HealInventory : ItemInventory
 {
-    public int currentHeal; // Текущая прочность аптечки
-    public int maxHeal;     // Максимальная прочность
+    public int currentHeal; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    public int maxHeal;     // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
-    // Конструктор для копирования базового предмета аптечки
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     public HealInventory(ItemInventory baseItem, ItemHeal healData)
     {
         id = baseItem.id;
@@ -1149,8 +1150,8 @@ public class HealInventory : ItemInventory
 [System.Serializable]
 public class WeaponInventory : ItemInventory
 {
-    public int currentAmmo;     // Текущее количество патронов
-    public int magazineSize;     // Размер магазина
+    public int currentAmmo;     // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    public int magazineSize;     // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
     public WeaponInventory(ItemInventory baseItem, WeaponItemData weaponData)
     {
@@ -1161,7 +1162,7 @@ public class WeaponInventory : ItemInventory
         if (weaponData != null)
         {
             magazineSize = weaponData.magazineSize;
-            currentAmmo = weaponData.magazineSize; // По умолчанию полный магазин
+            currentAmmo = weaponData.magazineSize; // пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         }
         else
         {

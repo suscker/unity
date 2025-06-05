@@ -8,7 +8,7 @@ public class PlayerMovement2D : MonoBehaviour
     public bool canMove = true;
     [Header("Ссылки")]
     [Tooltip("Ссылка на Inventory, чтобы брать текущий вес")]
-    public Inventory inventory;
+    private Inventory inventory;
     [Tooltip("Ссылка на camera")]
     public Camera cam;
     //[Tooltip("Ссылка на body")]
@@ -52,8 +52,13 @@ public class PlayerMovement2D : MonoBehaviour
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        
+        // Get Inventory component from the same object
+        inventory = GetComponent<Inventory>();
         if (inventory == null)
-            Debug.LogError("PlayerMovement2D: не задан Inventory-компонент в инспекторе.");
+        {
+            Debug.LogError("PlayerMovement2D: Inventory component not found on player!");
+        }
     }
 
     public void SetCanMove(bool canMove)

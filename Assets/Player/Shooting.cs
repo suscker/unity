@@ -1,14 +1,15 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class Shooting : MonoBehaviour
 {
     [Header("Inventory")]
-    public Inventory inventory;
+    private Inventory inventory;
     public Transform firePoint;
     public GameObject bulletPrefab;
-    public float bulletForce = 20f;
+    public float bulletForce = 70f;
 
     [Header("Reload Settings")]
     public AudioClip reloadSound;
@@ -23,19 +24,33 @@ public class Shooting : MonoBehaviour
     private bool isFiring = false;
 
     [Header("Spread Settings")]
-    public float maxMovementSpread = 10f; // Максимальный доп. разброс при движении
-    public float movementSpreadMultiplier = 1.5f; // Множитель влияния движения
-    private float currentSpread = 0f; // Текущий разброс пуль
-    private float timeSinceLastShot = 0f; // Время с последнего выстрела
-    private PlayerMovement2D playerMovement; // Ссылка на скрипт движения
+    public float maxMovementSpread = 10f; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ. пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    public float movementSpreadMultiplier = 1.5f; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    private float currentSpread = 0f; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
+    private float timeSinceLastShot = 0f; // пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    private PlayerMovement2D playerMovement; // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
     void Start()
     {
-        // Получаем компонент движения игрока
+        // Get Inventory component from the same object
+        inventory = GetComponent<Inventory>();
+        if (inventory == null)
+        {
+            Debug.LogError("Shooting: Inventory component not found on player!");
+        }
+
+        // Get PlayerMovement2D component
         playerMovement = GetComponent<PlayerMovement2D>();
         if (playerMovement == null)
         {
             Debug.LogError("Shooting: PlayerMovement2D component not found!");
+        }
+
+        // Add listener to weapon slot button
+        Button weaponSlotButton = GetComponent<Button>();
+        if (weaponSlotButton != null)
+        {
+            weaponSlotButton.onClick.AddListener(OnWeaponSlotClicked);
         }
     }
 
@@ -44,7 +59,7 @@ public class Shooting : MonoBehaviour
         if (isReloading || (inventory != null && inventory.backGround != null && inventory.backGround.activeSelf))
             return;
 
-        // Проверяем наличие оружия и его данных
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         if (inventory == null || inventory.weaponSlot == null || inventory.weaponSlot.id == 0)
             return;
 
@@ -52,7 +67,7 @@ public class Shooting : MonoBehaviour
         if (weaponData == null)
             return;
 
-        // Восстановление разброса со временем
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         if (!isFiring)
         {
             timeSinceLastShot += Time.deltaTime;
@@ -60,7 +75,7 @@ public class Shooting : MonoBehaviour
                                      currentSpread - weaponData.spreadRecoveryRate * Time.deltaTime);
         }
 
-        // Автоматическая стрельба при зажатии
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         if (Input.GetButton("Fire1") && weaponData.isAutomatic)
         {
             isFiring = true;
@@ -74,7 +89,7 @@ public class Shooting : MonoBehaviour
         {
             isFiring = false;
 
-            // Одиночная стрельба при нажатии
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             if (Input.GetButtonDown("Fire1"))
             {
                 TryShoot(weaponData);
@@ -91,14 +106,14 @@ public class Shooting : MonoBehaviour
     {
         if (inventory.weaponSlot.currentAmmo > 0)
         {
-            // Увеличиваем разброс от стрельбы
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             currentSpread = Mathf.Min(weaponData.maxSpread,
                                      currentSpread + weaponData.spreadIncreasePerShot);
 
             timeSinceLastShot = 0f;
             inventory.weaponSlot.currentAmmo--;
 
-            // Рассчитываем общий разброс с учетом движения
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             float totalSpread = CalculateTotalSpread(weaponData);
             Shoot(weaponData, totalSpread);
 
@@ -107,26 +122,26 @@ public class Shooting : MonoBehaviour
         else
         {
             Debug.Log("Out of ammo!");
-            // Автоматическая перезарядка при пустом магазине
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             if (!isReloading) TryReload();
         }
     }
 
-    // Рассчитывает общий разброс с учетом движения
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     float CalculateTotalSpread(WeaponItemData weaponData)
     {
-        // Базовый разброс от стрельбы
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         float spread = currentSpread;
 
-        // Добавляем разброс от движения
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         if (playerMovement != null && playerMovement.IsMoving)
         {
-            // Рассчитываем дополнительный разброс в зависимости от скорости
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             float movementSpread = playerMovement.RelativeSpeed * weaponData.maxMovementSpread;
             spread += movementSpread * weaponData.movementSpreadMultiplier;
         }
 
-        // Ограничиваем максимальным значением
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         return Mathf.Min(spread, weaponData.maxSpread + weaponData.maxMovementSpread);
     }
 
@@ -145,7 +160,7 @@ public class Shooting : MonoBehaviour
             return;
         }
 
-        // Рассчитываем сколько патронов нужно для полной зарядки
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         int ammoNeeded = weaponData.magazineSize - inventory.weaponSlot.currentAmmo;
         if (ammoNeeded <= 0)
         {
@@ -153,7 +168,7 @@ public class Shooting : MonoBehaviour
             return;
         }
 
-        // Ищем все слоты с нужными патронами
+        // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         List<AmmoSlotInfo> ammoSlots = FindAmmoSlots(weaponData.ammoTipe);
         if (ammoSlots.Count == 0)
         {
@@ -161,7 +176,7 @@ public class Shooting : MonoBehaviour
             return;
         }
 
-        // Рассчитываем сколько патронов доступно всего
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
         int totalAmmoAvailable = 0;
         foreach (var slot in ammoSlots)
         {
@@ -174,7 +189,7 @@ public class Shooting : MonoBehaviour
             return;
         }
 
-        // Сколько патронов мы реально можем взять
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
         int ammoToTake = Mathf.Min(ammoNeeded, totalAmmoAvailable);
         StartCoroutine(Reload(ammoSlots, ammoToTake, weaponData));
     }
@@ -189,39 +204,39 @@ public class Shooting : MonoBehaviour
 
         yield return new WaitForSeconds(reloadTime);
 
-        // Берем патроны из слотов
+        // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         int remainingToTake = ammoToTake;
         foreach (var slotInfo in ammoSlots)
         {
             if (remainingToTake <= 0) break;
 
-            // Сколько взять из этого слота
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
             int takeFromSlot = Mathf.Min(remainingToTake, slotInfo.ammoCount);
 
-            // Уменьшаем количество в слоте
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ
             inventory.items[slotInfo.slotIndex].count -= takeFromSlot;
             remainingToTake -= takeFromSlot;
 
-            // Если слот опустел, очищаем его
+            // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ
             if (inventory.items[slotInfo.slotIndex].count <= 0)
             {
                 inventory.AddItem(slotInfo.slotIndex, inventory.data.items[0], 0);
             }
         }
 
-        // Заряжаем оружие
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         inventory.weaponSlot.currentAmmo += ammoToTake;
         inventory.UpdateInventory();
         Debug.Log($"Reloaded! Ammo: {inventory.weaponSlot.currentAmmo}/{weaponData.magazineSize}");
         inventory.UpdateWeaponSlotText();
 
-        // Сброс разброса после перезарядки
+        // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         currentSpread = weaponData.baseSpread;
 
         isReloading = false;
     }
 
-    // Структура для хранения информации о слотах с патронами
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     private struct AmmoSlotInfo
     {
         public int slotIndex;
@@ -234,7 +249,7 @@ public class Shooting : MonoBehaviour
         }
     }
 
-    // Поиск всех слотов с патронами нужного типа
+    // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
     List<AmmoSlotInfo> FindAmmoSlots(string ammoType)
     {
         List<AmmoSlotInfo> slots = new List<AmmoSlotInfo>();
@@ -258,7 +273,7 @@ public class Shooting : MonoBehaviour
         if (fireSound != null)
             AudioSource.PlayClipAtPoint(fireSound, transform.position);
 
-        // Рассчитываем случайное отклонение
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         float spreadAngle = Random.Range(-totalSpread, totalSpread);
         Quaternion bulletRotation = firePoint.rotation * Quaternion.Euler(0, 0, spreadAngle);
 
@@ -266,7 +281,7 @@ public class Shooting : MonoBehaviour
         Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
         rb.AddForce(bulletRotation * Vector2.up * bulletForce, ForceMode2D.Impulse);
 
-        // Установка урона пуле
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
         Bullet bulletScript = bullet.GetComponent<Bullet>();
         if (bulletScript != null)
         {
@@ -277,7 +292,13 @@ public class Shooting : MonoBehaviour
             Debug.LogWarning("Bullet prefab is missing Bullet component!");
         }
 
-        // Визуализация для отладки
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         Debug.DrawRay(firePoint.position, bulletRotation * Vector2.up * 5f, Color.red, 0.1f);
+    }
+
+    void OnWeaponSlotClicked()
+    {
+        Debug.Log("Weapon slot clicked!");
+        // Implement the logic for weapon slot click
     }
 }

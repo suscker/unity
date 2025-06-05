@@ -25,8 +25,8 @@ MonoBehaviour:
   magazineSize: 30
   ammoTipe: 5.45x39
   baseSpread: 1
-  maxSpread: 8
-  spreadIncreasePerShot: 2
+  maxSpread: 9
+  spreadIncreasePerShot: 2.2
   spreadRecoveryRate: 5
-  maxMovementSpread: 5
+  maxMovementSpread: 8
   movementSpreadMultiplier: 2

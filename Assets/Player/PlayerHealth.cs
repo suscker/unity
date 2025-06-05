@@ -17,8 +17,8 @@ public class PlayerHealth : MonoBehaviour
     public int CurrentHealth => currentHealth;
 
     [Header("Links")]
-    [Tooltip("Ссылка на Inventory (назначается в инспекторе)")]
-    public Inventory inventory;
+    [Tooltip("Ссылка на Inventory (будет найдена автоматически)")]
+    private Inventory inventory;  // Changed to private, will be found automatically
 
     [Header("Armor Reference")]
     public ItemArmor equippedArmor;
@@ -38,6 +38,13 @@ public class PlayerHealth : MonoBehaviour
 
     private void Start()
     {
+        // Get Inventory component from the same object
+        inventory = GetComponent<Inventory>();
+        if (inventory == null)
+        {
+            Debug.LogError("PlayerHealth: Inventory component not found on player!");
+        }
+
         keyStates.Add(KeyCode.LeftShift, false);
         keyStates.Add(KeyCode.Z, false);
         keyStates.Add(KeyCode.H, false);
