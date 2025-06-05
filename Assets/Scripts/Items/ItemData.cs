@@ -10,11 +10,4 @@ public abstract class ItemData : ScriptableObject
     public Sprite img;
     public int maxCountInStack = 1;
     public int weight;
-
-    // Базовый виртуальный метод использования предмета
-    // Для разных типов предметов можно переопределять.
-    public virtual void Use()
-    {
-        Debug.Log($"Using item: {itemName}");
-    }
 }

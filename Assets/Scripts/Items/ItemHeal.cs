@@ -6,8 +6,4 @@ public class ItemHeal : ItemData
     public int currentHeal;
     public int maxHeal;
     public float healHoldTime;
-    public override void Use()
-    {
-        Debug.Log($"Nothing happened");
-    }
 }

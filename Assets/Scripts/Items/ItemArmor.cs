@@ -7,8 +7,4 @@ public class ItemArmor : ItemData
     public int maxHP;
     public int currentHP;
     public int efficiency;
-    public override void Use()
-    {
-        Debug.Log($"Nothing happened with armor");
-    }
 }

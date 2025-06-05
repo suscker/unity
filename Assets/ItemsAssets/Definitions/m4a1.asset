@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e57679f94cff4084f8a81abf7a3aa8f4, type: 3}
+  m_Name: m4a1
+  m_EditorClassIdentifier: 
+  id: 6
+  cost: 10000
+  itemName: m4a1
+  img: {fileID: -6523142373678959762, guid: 56787aeba78c0164c9837416feccdc56, type: 3}
+  maxCountInStack: 1
+  weight: 4500
+  damage: 85
+  currentAmmo: 0
+  isAutomatic: 1
+  fireRate: 0.095
+  magazineSize: 30
+  ammoTipe: 5.56x45
+  baseSpread: 0.9
+  maxSpread: 8
+  spreadIncreasePerShot: 1.1
+  spreadRecoveryRate: 6
+  maxMovementSpread: 4
+  movementSpreadMultiplier: 1.7

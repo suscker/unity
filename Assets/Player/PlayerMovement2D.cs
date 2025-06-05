@@ -1,4 +1,6 @@
 using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerMovement2D : MonoBehaviour
@@ -7,6 +9,11 @@ public class PlayerMovement2D : MonoBehaviour
     [Header("Ссылки")]
     [Tooltip("Ссылка на Inventory, чтобы брать текущий вес")]
     public Inventory inventory;
+    [Tooltip("Ссылка на camera")]
+    public Camera cam;
+    //[Tooltip("Ссылка на body")]
+    //public Rigidbody2D rb;
+
 
     [Header("Скорость и инерция")]
     [Tooltip("Максимальная скорость (единиц/сек) при весе ≤ weightNoPenaltyKg")]
@@ -26,19 +33,32 @@ public class PlayerMovement2D : MonoBehaviour
 
     private Rigidbody2D rb;
 
+    public float CurrentSpeed => rb.linearVelocity.magnitude;
+    public float MaxSpeed => currentSpeed;
+    public float RelativeSpeed => Mathf.Clamp01(CurrentSpeed / Mathf.Max(MaxSpeed, 0.01f));
+    public bool IsMoving => CurrentSpeed > 0.1f;
     // Направление ввода (нормализованный вектор)
-    private Vector2 inputDirection;
+    public Vector2 inputDirection;
 
     // Текущее «целевое» значение скорости (будет пересчитываться в Update())
-    private float currentSpeed;
+    public float currentSpeed;
     // Текущее «целевое» ускорение (будет пересчитываться в Update())
-    private float currentAccel;
+    public float currentAccel;
 
+
+
+    // mouse
+    Vector2 mousePos;
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         if (inventory == null)
             Debug.LogError("PlayerMovement2D: не задан Inventory-компонент в инспекторе.");
+    }
+
+    public void SetCanMove(bool canMove)
+    {
+        this.canMove = canMove;
     }
 
     void Update()
@@ -77,10 +97,19 @@ public class PlayerMovement2D : MonoBehaviour
             currentSpeed = Mathf.Lerp(maxSpeed, minSpeed, t);
             currentAccel = Mathf.Lerp(maxAcceleration, minAcceleration, t);
         }
+
+
+        // mouse
+        //Input.mousePosition();
+        mousePos = cam.ScreenToWorldPoint(Input.mousePosition);
+
     }
 
     void FixedUpdate()
     {
+        Vector2 lookDir = mousePos - rb.position;
+        float angle = Mathf.Atan2(lookDir.y, lookDir.x) * Mathf.Rad2Deg - 90f;
+        rb.rotation = angle;
         /*
         if (!canMove)
         {

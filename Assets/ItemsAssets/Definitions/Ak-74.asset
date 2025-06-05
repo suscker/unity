@@ -18,8 +18,15 @@ MonoBehaviour:
   img: {fileID: 4568132766191599552, guid: fb4b423545b64f74881ef968bbbdae93, type: 3}
   maxCountInStack: 1
   weight: 3000
-  damage: 24
-  magazineSize: 30
+  damage: 115
   currentAmmo: 0
-  fireRate: 500
-  ammoType: 1
+  isAutomatic: 1
+  fireRate: 0.1
+  magazineSize: 30
+  ammoTipe: 5.45x39
+  baseSpread: 1
+  maxSpread: 8
+  spreadIncreasePerShot: 2
+  spreadRecoveryRate: 5
+  maxMovementSpread: 5
+  movementSpreadMultiplier: 2

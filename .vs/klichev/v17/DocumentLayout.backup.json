@@ -3,12 +3,52 @@
   "WorkspaceRootPath": "C:\\Users\\nob22\\klichev\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\nob22\\klichev\\Assets\\Player\\PlayerMovement2D.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Player\\PlayerMovement2D.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\nob22\\klichev\\Assets\\Player\\PlayerHealth.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Player\\PlayerHealth.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\nob22\\klichev\\Assets\\Status\\HealthUI.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Status\\HealthUI.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\nob22\\klichev\\Assets\\Inventory\\Inventory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Inventory\\Inventory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\nob22\\klichev\\Assets\\dataBase\\DataBase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\dataBase\\DataBase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\nob22\\klichev\\Assets\\Scripts\\Items\\ItemNothing.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\Items\\ItemNothing.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\nob22\\klichev\\Assets\\Scripts\\Items\\ItemDatabase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\Items\\ItemDatabase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\nob22\\klichev\\Assets\\Scripts\\Items\\ItemData.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\Items\\ItemData.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\nob22\\klichev\\Assets\\Scripts\\Items\\ItemHeal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\Items\\ItemHeal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\nob22\\klichev\\Assets\\Scripts\\Items\\ItemArmor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\Items\\ItemArmor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\nob22\\klichev\\Assets\\Scripts\\Items\\ItemLoot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\Items\\ItemLoot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\nob22\\klichev\\Assets\\Player\\CameraFollow2D.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Player\\CameraFollow2D.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\nob22\\klichev\\Assets\\Scripts\\Items\\WeaponItemData.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\Items\\WeaponItemData.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,32 +58,162 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "HealthUI.cs",
+              "DocumentMoniker": "C:\\Users\\nob22\\klichev\\Assets\\Status\\HealthUI.cs",
+              "RelativeDocumentMoniker": "Assets\\Status\\HealthUI.cs",
+              "ToolTip": "C:\\Users\\nob22\\klichev\\Assets\\Status\\HealthUI.cs",
+              "RelativeToolTip": "Assets\\Status\\HealthUI.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAACEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-04T11:51:50.151Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "PlayerHealth.cs",
+              "DocumentMoniker": "C:\\Users\\nob22\\klichev\\Assets\\Player\\PlayerHealth.cs",
+              "RelativeDocumentMoniker": "Assets\\Player\\PlayerHealth.cs",
+              "ToolTip": "C:\\Users\\nob22\\klichev\\Assets\\Player\\PlayerHealth.cs",
+              "RelativeToolTip": "Assets\\Player\\PlayerHealth.cs",
+              "ViewState": "AgIAADcAAAAAAAAAAAAwwHoAAAAuAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-03T22:11:00.612Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "PlayerMovement2D.cs",
+              "DocumentMoniker": "C:\\Users\\nob22\\klichev\\Assets\\Player\\PlayerMovement2D.cs",
+              "RelativeDocumentMoniker": "Assets\\Player\\PlayerMovement2D.cs",
+              "ToolTip": "C:\\Users\\nob22\\klichev\\Assets\\Player\\PlayerMovement2D.cs",
+              "RelativeToolTip": "Assets\\Player\\PlayerMovement2D.cs",
+              "ViewState": "AgIAAFoAAAAAAAAAAAAAAFgAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-03T09:32:57.118Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "Inventory.cs",
               "DocumentMoniker": "C:\\Users\\nob22\\klichev\\Assets\\Inventory\\Inventory.cs",
               "RelativeDocumentMoniker": "Assets\\Inventory\\Inventory.cs",
               "ToolTip": "C:\\Users\\nob22\\klichev\\Assets\\Inventory\\Inventory.cs",
               "RelativeToolTip": "Assets\\Inventory\\Inventory.cs",
-              "ViewState": "AgIAAAIBAAAAAAAAAAAgwA8BAAAeAAAAAAAAAA==",
+              "ViewState": "AgIAACcAAAAAAAAAAAAwwH4AAAAiAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-06-02T15:58:28.04Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "DataBase.cs",
-              "DocumentMoniker": "C:\\Users\\nob22\\klichev\\Assets\\dataBase\\DataBase.cs",
-              "RelativeDocumentMoniker": "Assets\\dataBase\\DataBase.cs",
-              "ToolTip": "C:\\Users\\nob22\\klichev\\Assets\\dataBase\\DataBase.cs",
-              "RelativeToolTip": "Assets\\dataBase\\DataBase.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAqAAAAAAAAAA==",
+              "DocumentIndex": 9,
+              "Title": "ItemLoot.cs",
+              "DocumentMoniker": "C:\\Users\\nob22\\klichev\\Assets\\Scripts\\Items\\ItemLoot.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Items\\ItemLoot.cs",
+              "ToolTip": "C:\\Users\\nob22\\klichev\\Assets\\Scripts\\Items\\ItemLoot.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Items\\ItemLoot.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-02T15:53:12.532Z",
+              "WhenOpened": "2025-06-03T21:39:08.357Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "ItemArmor.cs",
+              "DocumentMoniker": "C:\\Users\\nob22\\klichev\\Assets\\Scripts\\Items\\ItemArmor.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Items\\ItemArmor.cs",
+              "ToolTip": "C:\\Users\\nob22\\klichev\\Assets\\Scripts\\Items\\ItemArmor.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Items\\ItemArmor.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-03T21:34:58.144Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "WeaponItemData.cs",
+              "DocumentMoniker": "C:\\Users\\nob22\\klichev\\Assets\\Scripts\\Items\\WeaponItemData.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Items\\WeaponItemData.cs",
+              "ToolTip": "C:\\Users\\nob22\\klichev\\Assets\\Scripts\\Items\\WeaponItemData.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Items\\WeaponItemData.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAbAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-03T21:00:01.206Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "ItemDatabase.cs",
+              "DocumentMoniker": "C:\\Users\\nob22\\klichev\\Assets\\Scripts\\Items\\ItemDatabase.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Items\\ItemDatabase.cs",
+              "ToolTip": "C:\\Users\\nob22\\klichev\\Assets\\Scripts\\Items\\ItemDatabase.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Items\\ItemDatabase.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-03T21:03:02.312Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "ItemData.cs",
+              "DocumentMoniker": "C:\\Users\\nob22\\klichev\\Assets\\Scripts\\Items\\ItemData.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Items\\ItemData.cs",
+              "ToolTip": "C:\\Users\\nob22\\klichev\\Assets\\Scripts\\Items\\ItemData.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Items\\ItemData.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-03T20:52:25.18Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "ItemHeal.cs",
+              "DocumentMoniker": "C:\\Users\\nob22\\klichev\\Assets\\Scripts\\Items\\ItemHeal.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Items\\ItemHeal.cs",
+              "ToolTip": "C:\\Users\\nob22\\klichev\\Assets\\Scripts\\Items\\ItemHeal.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Items\\ItemHeal.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-03T21:31:21.182Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "ItemNothing.cs",
+              "DocumentMoniker": "C:\\Users\\nob22\\klichev\\Assets\\Scripts\\Items\\ItemNothing.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Items\\ItemNothing.cs",
+              "ToolTip": "C:\\Users\\nob22\\klichev\\Assets\\Scripts\\Items\\ItemNothing.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Items\\ItemNothing.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-03T21:14:56.374Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "CameraFollow2D.cs",
+              "DocumentMoniker": "C:\\Users\\nob22\\klichev\\Assets\\Player\\CameraFollow2D.cs",
+              "RelativeDocumentMoniker": "Assets\\Player\\CameraFollow2D.cs",
+              "ToolTip": "C:\\Users\\nob22\\klichev\\Assets\\Player\\CameraFollow2D.cs",
+              "RelativeToolTip": "Assets\\Player\\CameraFollow2D.cs",
+              "ViewState": "AgIAAAQAAAAAAAAAAAAIwAwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-03T10:32:08.584Z",
               "EditorCaption": ""
             }
           ]

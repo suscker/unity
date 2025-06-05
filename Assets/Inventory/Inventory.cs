@@ -34,7 +34,8 @@ public class Inventory : MonoBehaviour
 
     public GameObject backGround;
 
-    public ItemInventory weaponSlot = new ItemInventory();
+    //public ItemInventory weaponSlot = new ItemInventory();
+    public WeaponInventory weaponSlot = null; 
     public GameObject weaponSlotObject; 
     public Sprite weaponSlotDefaultSprite;
 
@@ -46,6 +47,9 @@ public class Inventory : MonoBehaviour
     public HealInventory healSlot = null;
     public GameObject healSlotObject;
     public Sprite healSlotDefaultSprite;
+
+    [Header("External Inventories")]
+    public GameObject crateInventoryUI; // Ссылка на UI инвентаря ящика
 
 
     public void Start()
@@ -65,6 +69,10 @@ public class Inventory : MonoBehaviour
         healSlot = new HealInventory(
         new ItemInventory { id = 0, itemGameObj = armorSlotObject },
         new ItemHeal()
+        );
+        weaponSlot = new WeaponInventory(
+        new ItemInventory { id = 0, itemGameObj = weaponSlotObject },
+        new WeaponItemData()
         );
         for (int i = 0; i < maxCount; i++)
         {
@@ -113,6 +121,27 @@ public class Inventory : MonoBehaviour
         UpdateInventory();
     }
 
+    public void OpenInventoryWithCrate(GameObject crateUI)
+    {
+        crateInventoryUI = crateUI;
+        backGround.SetActive(true);
+        if (crateInventoryUI != null)
+        {
+            crateInventoryUI.SetActive(true);
+        }
+        UpdateInventory();
+        UpdateWeaponSlotText();
+    }
+
+    public void CloseInventory()
+    {
+        backGround.SetActive(false);
+        if (crateInventoryUI != null)
+        {
+            crateInventoryUI.SetActive(false);
+            crateInventoryUI = null;
+        }
+    }
 
     ///
 
@@ -389,56 +418,90 @@ public class Inventory : MonoBehaviour
     {
         if (currentID == -1)
         {
-            // В руке ничего — взять из weaponSlot
-            if (weaponSlot.id == 0 || weaponSlot.count == 0) return;
+            // В руке ничего - взять из weaponSlot
+            if (weaponSlot.id == 0) return;
 
             currentItem = CopyInventoryItem(weaponSlot);
 
-            weaponSlot.id = 0;
-            weaponSlot.count = 0;
-            weaponSlot.itemGameObj.GetComponent<Image>().sprite = weaponSlotDefaultSprite;
-            weaponSlot.itemGameObj.GetComponent<Image>().color = Color.white;
-            UpdateWeaponSlotText();
+            // Очищаем слот
+            weaponSlot = new WeaponInventory(
+                new ItemInventory { id = 0, itemGameObj = weaponSlotObject },
+                null
+            );
+
+            UpdateWeaponSlotUI(); // Используем метод обновления UI
 
             movingObject.gameObject.SetActive(true);
             movingObject.GetComponent<Image>().sprite = data.items[currentItem.id].img;
+            UpdateMovingObjectUI();
 
-            currentID = -2; // -2 означает "взято из оружейного слота"
+            currentID = -2;
         }
         else
         {
             // Есть предмет в руке
-            if (!IsWeapon(data.items[currentItem.id])) return;
+            if (!(data.items[currentItem.id] is WeaponItemData)) return;
 
-            // Если в слоте уже есть предмет — вернуть его в инвентарь
-            if (weaponSlot.id != 0 && weaponSlot.count > 0)
+            // Если в слоте уже есть предмет - вернуть его в инвентарь
+            if (weaponSlot.id != 0)
             {
-                int remaining = SearchForSameItem(data.items[weaponSlot.id], weaponSlot.count);
-                if (remaining > 0)
+                int freeIndex = FindFreeSlot();
+                if (freeIndex != -1)
                 {
-                    Debug.LogWarning("Не удалось полностью вернуть предмет из Weapon-слота в инвентарь. Осталось: " + remaining);
+                    AddInventoryItem(freeIndex, weaponSlot);
+                }
+                else
+                {
+                    Debug.LogWarning("Инвентарь полон! Не могу вернуть оружие.");
+                    return;
                 }
             }
 
-            // Экипировать предмет из руки в слот
-            weaponSlot.id = currentItem.id;
-            weaponSlot.count = currentItem.count;
-            weaponSlot.itemGameObj.GetComponent<Image>().sprite = data.items[currentItem.id].img;
-            UpdateWeaponSlotText();
+            // Экипировать оружие (FIXED: сохраняем текущие патроны)
+            WeaponItemData weaponData = data.items[currentItem.id] as WeaponItemData;
+            weaponSlot = new WeaponInventory(
+                new ItemInventory
+                {
+                    id = currentItem.id,
+                    count = 1,
+                    itemGameObj = weaponSlotObject // Критически важно!
+                },
+                weaponData
+            );
+
+            // Сохраняем текущие патроны
+            if (currentItem is WeaponInventory weaponItem)
+            {
+                weaponSlot.currentAmmo = weaponItem.currentAmmo;
+            }
+            else
+            {
+                weaponSlot.currentAmmo = weaponData.magazineSize;
+            }
+
+            UpdateWeaponSlotUI(); // Используем метод обновления UI
 
             // Очистить курсор
             currentItem = new ItemInventory();
             movingObject.gameObject.SetActive(false);
             currentID = -1;
-
         }
     }
 
-    void UpdateWeaponSlotText()
+    public void UpdateWeaponSlotText()
     {
-        var text = weaponSlot.itemGameObj.GetComponentInChildren<TMP_Text>();
+        var text = weaponSlotObject.GetComponentInChildren<TMP_Text>();
         if (text != null)
-            text.text = weaponSlot.id == 0 ? "" : data.items[weaponSlot.id].name;
+        {
+            if (weaponSlot.id != 0)
+            {
+                text.text = $"{weaponSlot.currentAmmo}/{weaponSlot.magazineSize}";
+            }
+            else
+            {
+                text.text = "";
+            }
+        }
     }
 
     ///
@@ -450,11 +513,11 @@ public class Inventory : MonoBehaviour
         {
             if (items[i].id != 0)
             {
+
                 totalWeight += data.items[items[i].id].weight * items[i].count;
             }
         }
-
-        if (weaponSlot.id != 0 && weaponSlot.count > 0)
+        if (weaponSlot != null && weaponSlot.id != 0)
             totalWeight += data.items[weaponSlot.id].weight * weaponSlot.count;
 
         if (armorSlot.id != 0 && armorSlot.count > 0)
@@ -581,6 +644,20 @@ public class Inventory : MonoBehaviour
 
             items[slotIndex] = newArmorSlot;
         }
+        else if (item is WeaponItemData weaponData)
+        {
+            var newWeaponSlot = new WeaponInventory(
+                new ItemInventory { id = item.id, count = count, itemGameObj = cellGo },
+                weaponData
+            );
+
+            cellGo.GetComponent<Image>().sprite = item.img;
+            var txt = cellGo.GetComponentInChildren<TMP_Text>();
+            if (txt != null)
+                txt.text = $"{newWeaponSlot.currentAmmo}/{newWeaponSlot.magazineSize}";
+
+            items[slotIndex] = newWeaponSlot;
+        }
         else if (item is ItemHeal healData) // Добавляем проверку для аптечки
         {
             var newHealSlot = new HealInventory(
@@ -657,6 +734,34 @@ public class Inventory : MonoBehaviour
             else
             {
                 Debug.LogError($"Item с id={armorOld.id} не является ItemArmor");
+            }
+        }
+        else if (invItem is WeaponInventory weaponOld)
+        {
+            ItemData template = data.items[weaponOld.id];
+            if (template is WeaponItemData weaponData)
+            {
+                WeaponInventory newWeaponSlot = new WeaponInventory(
+                    new ItemInventory
+                    {
+                        id = weaponOld.id,
+                        count = weaponOld.count,
+                        itemGameObj = cellGo
+                    },
+                    weaponData
+                )
+                {
+                    currentAmmo = weaponOld.currentAmmo,
+                    magazineSize = weaponOld.magazineSize
+                };
+
+                cellGo.GetComponent<Image>().sprite = weaponData.img;
+                var txt = cellGo.GetComponentInChildren<TMP_Text>();
+                if (txt != null)
+                    txt.text = $"{newWeaponSlot.currentAmmo}/{newWeaponSlot.magazineSize}";
+
+                items[slotIndex] = newWeaponSlot;
+                return;
             }
         }
         else if (invItem is HealInventory healOld)
@@ -744,7 +849,12 @@ public class Inventory : MonoBehaviour
             if (items[i].id != 0 && items[i].count > 0)
             {
                 // Проверяем тип предмета
-                if (items[i] is ArmorInventory armorSlot)
+                if (items[i] is WeaponInventory weaponSlot)
+                {
+                    if (txtComp != null)
+                        txtComp.text = $"{weaponSlot.currentAmmo}/{weaponSlot.magazineSize}";
+                }
+                else if (items[i] is ArmorInventory armorSlot)
                 {
                     if (txtComp != null)
                         txtComp.text = $"{armorSlot.currentDurability}/{armorSlot.maxDurability}";
@@ -774,37 +884,30 @@ public class Inventory : MonoBehaviour
     /// </summary>
     public void UpdateWeaponSlotUI()
     {
-        // Получаем Image и TMP_Text прямо в нужном GameObject’е
-        var img = weaponSlotObject.GetComponent<Image>();
-        var txt = weaponSlotObject.GetComponentInChildren<TMP_Text>();
+        Image img = weaponSlotObject.GetComponent<Image>();
+        TMP_Text txt = weaponSlotObject.GetComponentInChildren<TMP_Text>();
 
-        if (weaponSlot.id != 0 && weaponSlot.count > 0)
+        if (weaponSlot.id != 0)
         {
-            // Если в слоте есть предмет — рисуем его иконку и (при необходимости) количество
-            var dataItem = data.items[weaponSlot.id];
-            if (img != null)
-                img.sprite = dataItem.img;
-
-            if (txt != null)
-                txt.text = (weaponSlot.count > 1 ? weaponSlot.count.ToString() : "");
+            img.sprite = data.items[weaponSlot.id].img;
+            txt.text = $"{weaponSlot.currentAmmo}/{weaponSlot.magazineSize}";
         }
         else
         {
-            // Слот пустой — рисуем «дефолтную» картинку и очищаем текст
-            if (img != null)
-                img.sprite = weaponSlotDefaultSprite;
-
-            if (txt != null)
-                txt.text = "";
+            img.sprite = weaponSlotDefaultSprite;
+            txt.text = "";
         }
     }
-
     public void UpdateMovingObjectUI()
     {
         TMP_Text text = movingObject.GetComponentInChildren<TMP_Text>();
         if (text == null) return;
 
-        if (currentItem is ArmorInventory armorCursor)
+        if (currentItem is WeaponInventory weaponCursor)
+        {
+            text.text = $"{weaponCursor.currentAmmo}/{weaponCursor.magazineSize}";
+        }
+        else if (currentItem is ArmorInventory armorCursor)
         {
             // Для брони показываем текущую/максимальную прочность
             text.text = $"{armorCursor.currentDurability}/{armorCursor.maxDurability}";
@@ -821,7 +924,15 @@ public class Inventory : MonoBehaviour
         }
     }
 
-
+    private int FindFreeSlot()
+    {
+        for (int i = 0; i < maxCount; i++)
+        {
+            if (items[i].id == 0)
+                return i;
+        }
+        return -1;
+    }
 
     public void SelectObject()
     {
@@ -921,6 +1032,25 @@ public class Inventory : MonoBehaviour
 
     public ItemInventory CopyInventoryItem(ItemInventory old)
     {
+
+        // Для оружия
+        if (old is WeaponInventory weaponOld)
+        {
+            WeaponInventory newWeapon = new WeaponInventory(
+                new ItemInventory
+                {
+                    id = weaponOld.id,
+                    count = weaponOld.count,
+                    itemGameObj = weaponOld.itemGameObj
+                },
+                data.items[weaponOld.id] as WeaponItemData
+            )
+            {
+                currentAmmo = weaponOld.currentAmmo,
+                magazineSize = weaponOld.magazineSize
+            };
+            return newWeapon;
+        }
         // Для брони
         if (old is ArmorInventory armorOld)
         {
@@ -998,7 +1128,7 @@ public class ArmorInventory : ItemInventory
     }
 }
 
-
+[System.Serializable]
 public class HealInventory : ItemInventory
 {
     public int currentHeal; // Текущая прочность аптечки
@@ -1012,5 +1142,30 @@ public class HealInventory : ItemInventory
         itemGameObj = baseItem.itemGameObj;
         currentHeal = healData.currentHeal;
         maxHeal = healData.maxHeal;
+    }
+}
+
+[System.Serializable]
+public class WeaponInventory : ItemInventory
+{
+    public int currentAmmo;     // Текущее количество патронов
+    public int magazineSize;     // Размер магазина
+
+    public WeaponInventory(ItemInventory baseItem, WeaponItemData weaponData)
+    {
+        id = baseItem.id;
+        count = baseItem.count;
+        itemGameObj = baseItem.itemGameObj;
+
+        if (weaponData != null)
+        {
+            magazineSize = weaponData.magazineSize;
+            currentAmmo = weaponData.magazineSize; // По умолчанию полный магазин
+        }
+        else
+        {
+            magazineSize = 0;
+            currentAmmo = 0;
+        }
     }
 }
