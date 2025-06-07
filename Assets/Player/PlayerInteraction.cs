@@ -6,7 +6,6 @@ public class PlayerInteraction : MonoBehaviour
     [Header("Interaction Settings")]
     public float interactionDistance = 2f;    // Дистанция взаимодействия
     public LayerMask interactableLayers;      // Слои, с которыми можно взаимодействовать
-    public KeyCode interactKey = KeyCode.E;   // Клавиша взаимодействия
     private List<GameObject> slotInstances = new List<GameObject>();
 
     private Camera mainCamera;
@@ -24,16 +23,8 @@ public class PlayerInteraction : MonoBehaviour
         }
     }
 
-    private void Update()
-    {
-        // Проверяем нажатие клавиши взаимодействия
-        if (Input.GetKeyDown(interactKey))
-        {
-            TryInteract();
-        }
-    }
 
-    private void TryInteract()
+    public Crate TryInteract()
     {
         Vector2 origin = transform.position;
         Vector2 mouseWorldPos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
@@ -48,12 +39,10 @@ public class PlayerInteraction : MonoBehaviour
 
         if (hit.collider != null)
         {
-            IInteractable interactable = hit.collider.GetComponent<IInteractable>();
-            if (interactable != null)
-            {
-                interactable.Interact(playerInventory);
-            }
+            if(hit.collider.GetComponent<Crate>() != null)
+            return hit.collider.GetComponent<Crate>();
         }
+        return null;
     }
 
     // Визуализация дистанции взаимодействия в редакторе

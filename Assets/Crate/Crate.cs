@@ -30,7 +30,6 @@ public class Crate : MonoBehaviour, IInteractable
             items.Add(new ItemInventory { id = 0, count = 0 });
         }
     }
-
     public void Interact(Inventory playerInventory)
     {
         if (!isOpen)
@@ -44,8 +43,7 @@ public class Crate : MonoBehaviour, IInteractable
             CloseCrate(playerInventory);
         }
     }
-
-    private void OpenCrate(Inventory playerInventory)
+    public void OpenCrate(Inventory playerInventory)
     {
         isOpen = true;
         if (inventoryUI != null)
@@ -70,7 +68,7 @@ public class Crate : MonoBehaviour, IInteractable
         crateUI.UpdateUI(items);
     }
 
-    private void CloseCrate(Inventory playerInventory)
+    public void CloseCrate(Inventory playerInventory)
     {
         isOpen = false;
         // Скрываем UI инвентаря

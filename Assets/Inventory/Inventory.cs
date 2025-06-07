@@ -8,6 +8,8 @@ public class Inventory : MonoBehaviour
 {
     [Header("Player Reference")]
     public PlayerHealth playerHealth;
+    public PlayerInteraction playerInteraction;
+    public Crate crate;
 
     [Tooltip("ItemDatabase")]
     public ItemDatabase data;
@@ -542,14 +544,50 @@ public class Inventory : MonoBehaviour
     void Update()
     {
         // ��������/�������� ��������� �� ������� I
-        if (Input.GetKeyDown(KeyCode.I))
+        if (Input.GetKeyDown(KeyCode.E))
         {
+            
+
+
+
+            Debug.Log("E pressed");
             bool isActive = !backGround.activeSelf;
             backGround.SetActive(isActive);
-
-            if (isActive)
+            if(isActive)
             {
-                UpdateInventory();
+                crate = playerInteraction.TryInteract();
+                if(crate != null)
+                {
+                    Debug.Log("open Crate + Inventory");
+                    crate.OpenCrate(this);
+                    backGround.SetActive(true);
+                    UpdateInventory();
+                    return;
+                }
+                else
+                {
+                    Debug.Log("open Inventory");
+                    backGround.SetActive(true);
+                    UpdateInventory();
+                    return;
+                }
+            }
+            else
+            {
+                if(crate != null)
+                {
+                    Debug.Log("close Crate + Inventory");
+                    crate.CloseCrate(this);
+                    crate = null;
+                    backGround.SetActive(false);
+                    return;
+                }
+                else
+                {
+                    Debug.Log("close Inventory");
+                    backGround.SetActive(false);
+                    return;
+                }
             }
         }
 
