@@ -19,6 +19,11 @@ public class CrateInventoryUI : MonoBehaviour
         InitializeSlots();
     }
 
+    public List<GameObject> GetSlotObjects()
+    {
+        return slotObjects;
+    }
+
     private void InitializeSlots()
     {
         // Очищаем существующие слоты
@@ -35,6 +40,17 @@ public class CrateInventoryUI : MonoBehaviour
             GameObject slot = Instantiate(slotPrefab, slotsParent);
             slot.name = $"Slot_{i}";
             slotObjects.Add(slot);
+            Button btn = slot.GetComponent<Button>();
+            if (btn != null)
+            {
+                btn.onClick.AddListener(() =>
+                {
+                    // Получаем ссылку на Inventory (например, через синглтон или FindObjectOfType)
+                    var inventory = FindAnyObjectByType<Inventory>();
+                    if (inventory != null)
+                        inventory.SelectObject();
+                });
+            }
         }
     }
 

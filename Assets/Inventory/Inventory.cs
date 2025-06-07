@@ -88,7 +88,7 @@ public class Inventory : MonoBehaviour
          * �����
         */
         ///Debug.Log("Ya tyt");
-        for (int i = 0; i < maxCount; i++)
+        for (int i = 0; i < 3; i++)
         {
             int number = Random.Range(0, data.items.Count);
             ItemData rndItem = data.items[number];
@@ -546,9 +546,6 @@ public class Inventory : MonoBehaviour
         // ��������/�������� ��������� �� ������� I
         if (Input.GetKeyDown(KeyCode.E))
         {
-            
-
-
 
             Debug.Log("E pressed");
             bool isActive = !backGround.activeSelf;
@@ -559,7 +556,8 @@ public class Inventory : MonoBehaviour
                 if(crate != null)
                 {
                     Debug.Log("open Crate + Inventory");
-                    crate.OpenCrate(this);
+                    crate.Interact(this);
+                    crate.UpdateInventory();
                     backGround.SetActive(true);
                     UpdateInventory();
                     return;
@@ -577,7 +575,7 @@ public class Inventory : MonoBehaviour
                 if(crate != null)
                 {
                     Debug.Log("close Crate + Inventory");
-                    crate.CloseCrate(this);
+                    crate.Interact(this);
                     crate = null;
                     backGround.SetActive(false);
                     return;
@@ -938,6 +936,7 @@ public class Inventory : MonoBehaviour
             txt.text = "";
         }
     }
+
     public void UpdateMovingObjectUI()
     {
         TMP_Text text = movingObject.GetComponentInChildren<TMP_Text>();
@@ -976,10 +975,62 @@ public class Inventory : MonoBehaviour
 
     public void SelectObject()
     {
-        if (currentItem is HealInventory healCursor)
+        Debug.Log("!SelectObject!   SelectCrateInventoryObject///SelectPlayerInventoryObject");
+        GameObject clickedObject = es.currentSelectedGameObject;
+
+        if (crate != null && clickedObject.transform.IsChildOf(crate.inventoryUI.transform))
         {
-            Debug.Log($"Moving heal item: {healCursor.currentHeal}/{healCursor.maxHeal}");
+            SelectCrateInventoryObject();
+            return;
         }
+        SelectPlayerInventoryObject();
+    }
+
+    private void SelectCrateInventoryObject()
+    {
+        Debug.Log("!SelectCrateInventoryObject!");
+        if (!int.TryParse(es.currentSelectedGameObject.name.Split('_')[1], out int index))
+        {
+            Debug.Log($"cant parse = {es.currentSelectedGameObject.name}");
+            return;
+        }
+        
+        if (currentID == -1)
+        {
+            ItemInventory item = crate.GetItemFromSlot(index);
+            if (item != null && item.id != 0)
+            {
+                currentItem = CopyInventoryItem(item);
+                currentID = index;
+                movingObject.gameObject.SetActive(true);
+                movingObject.GetComponent<Image>().sprite = data.items[currentItem.id].img;
+                UpdateMovingObjectUI();
+            }
+        }
+        // Положить предмет в ячейку ящика
+        else
+        {
+            var (success, remaining) = crate.PutItemInSlot(index, CopyInventoryItem(currentItem));
+            if (success)
+            {
+                if (remaining == null || remaining.count == 0)
+                {
+                    currentItem = null;
+                    currentID = -1;
+                    movingObject.gameObject.SetActive(false);
+                }
+                else
+                {
+                    currentItem = remaining;
+                    movingObject.GetComponent<Image>().sprite = data.items[currentItem.id].img;
+                    UpdateMovingObjectUI();
+                }
+            }
+        }
+    }
+
+    public void SelectPlayerInventoryObject()
+    {
         if (!int.TryParse(es.currentSelectedGameObject.name, out int index))
         {
             Debug.Log($"cant pars = {es.currentSelectedGameObject.name}");
