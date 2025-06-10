@@ -16,7 +16,7 @@ public class Inventory : MonoBehaviour
     public List<ItemInventory> items = new List<ItemInventory>();
 
     [Header("UI")]
-    [Tooltip("������ �� Text, ��� ���������� ��� (� ��)")]
+    [Tooltip("Ссылка на Text, для отображения веса (в кг)")]
     public TMP_Text weightText;
 
     public GameObject gameObjShow;
@@ -51,7 +51,7 @@ public class Inventory : MonoBehaviour
     public Sprite healSlotDefaultSprite;
 
     [Header("External Inventories")]
-    public GameObject crateInventoryUI; // ������ �� UI ��������� �����
+    public GameObject crateInventoryUI; // Ссылка на UI инвентаря ящика
 
 
     public void Start()
@@ -83,9 +83,9 @@ public class Inventory : MonoBehaviour
 
 
         /*
-         * ��� 
-         * ���
-         * �����
+         * Лут 
+         * Броня
+         * Оружие
         */
         ///Debug.Log("Ya tyt");
         for (int i = 0; i < 3; i++)
@@ -93,18 +93,17 @@ public class Inventory : MonoBehaviour
             int number = Random.Range(0, data.items.Count);
             ItemData rndItem = data.items[number];
 
-            // ���� ������ ����� � ������ � ������ ArmorInventory � ������� �� random durability
+            // Если предмет является броней, создаем слот ArmorInventory с random durability
             if (rndItem is ItemArmor armorData)
             {
                 AddItem(i, rndItem, 1);
 
-                // � ���� ����� ����� ������������� ��������� ��������� (���� �����)
+                // В этом месте мы устанавливаем случайное значение прочности (если броня)
                 if (items[i] is ArmorInventory aSlot)
                 {
                     aSlot.currentDurability = Random.Range(1, aSlot.maxDurability + 1);
 
-                    // � ����� ��������� ����� (�� �� ����� ���� ��� �������������
-                    // AddItem ��� ��������� ��������, � ����� �� ������ ������������):
+                    // В слоте отображаем прочность (не нужно делать это в AddItem, так как там не создаются объекты):
                     var txt = aSlot.itemGameObj.GetComponentInChildren<TMP_Text>();
                     if (txt != null)
                         txt.text = $"{aSlot.currentDurability}/{aSlot.maxDurability}";
@@ -112,7 +111,7 @@ public class Inventory : MonoBehaviour
             }
             else
             {
-                // ������� �������
+                // Случайное количество
                 int rndCount = rndItem.maxCountInStack > 1
                                ? Random.Range(1, rndItem.maxCountInStack)
                                : 1;
@@ -155,7 +154,7 @@ public class Inventory : MonoBehaviour
 
     public void OnHealDestroyed()
     {
-        // ���������� ���� �������
+        // Сбрасываем слот лечения
         healSlot = new HealInventory(
             new ItemInventory { id = 0, itemGameObj = healSlotObject },
             new ItemHeal()
@@ -164,7 +163,7 @@ public class Inventory : MonoBehaviour
         healSlot.itemGameObj.GetComponent<Image>().sprite = healSlotDefaultSprite;
         UpdateHealSlotText();
 
-        Debug.Log("������� ���������!");
+        Debug.Log("Лечение уничтожено!");
     }
 
     public void EquipHeal(ItemInventory baseItem)
@@ -186,7 +185,7 @@ public class Inventory : MonoBehaviour
     {
         if (currentID == -1)
         {
-            // ����� �� �����
+            // Если слот пуст, возвращаемся
             if (healSlot == null || healSlot.id == 0) return;
 
             currentItem = new HealInventory(
@@ -198,7 +197,7 @@ public class Inventory : MonoBehaviour
                 maxHeal = healSlot.maxHeal
             };
 
-            // ������� ����
+            // Очищаем слот
             healSlot.id = 0;
             healSlot.currentHeal = 0;
             healSlot.maxHeal = 0;
@@ -212,17 +211,17 @@ public class Inventory : MonoBehaviour
         }
         else
         {
-            // ������ � ����
+            // Если предмет не является лечением - возвращаемся
             if (!(currentItem is HealInventory healItem)) return;
 
-            // ���� � ����� ��� ���� ������� - ������� ��� � ���������
+            // Если в слоте уже есть лечение - сбрасываем его в инвентарь
             if (healSlot.id != 0)
             {
                 int remaining = SearchForSameItem(data.items[healSlot.id], 1);
-                if (remaining > 0) Debug.Log("�� ������� ������� ������� �� �����");
+                if (remaining > 0) Debug.Log("Не удалось сбросить лечение в инвентарь");
             }
 
-            // ��������� ����
+            // Очищаем слот
             healSlot = new HealInventory(
                 new ItemInventory { id = healItem.id, count = 1 },
                 data.items[healItem.id] as ItemHeal
@@ -234,7 +233,7 @@ public class Inventory : MonoBehaviour
 
             UpdateHealSlotText();
 
-            // ������� ������
+            // Очищаем предмет
             currentItem = null;
             movingObject.gameObject.SetActive(false);
             currentID = -1;
@@ -245,7 +244,7 @@ public class Inventory : MonoBehaviour
     {
         if (healSlot == null || healSlot.id == 0)
         {
-            // �������� ����
+            // Если слот пуст
             healSlotObject.GetComponent<Image>().sprite = healSlotDefaultSprite;
             var text = healSlotObject.GetComponentInChildren<TMP_Text>();
             if (text != null) text.text = "";
@@ -272,7 +271,7 @@ public class Inventory : MonoBehaviour
 
     public void OnArmorDestroyed()
     {
-        // ���������� ���� �����
+        // Сбрасываем слот брони
         armorSlot = new ArmorInventory(
             new ItemInventory { id = 0, itemGameObj = armorSlotObject },
             new ItemArmor()
@@ -281,7 +280,7 @@ public class Inventory : MonoBehaviour
         armorSlot.itemGameObj.GetComponent<Image>().sprite = armorSlotDefaultSprite;
         UpdateArmorSlotText();
 
-        Debug.Log("����� ���������!");
+        Debug.Log("Броня уничтожена!");
     }
 
     public void EquipArmor(ItemData item)
@@ -289,7 +288,7 @@ public class Inventory : MonoBehaviour
         ItemArmor armorItem = item as ItemArmor;
         if (armorItem != null)
         {
-            // ������� ArmorInventory �� �������� ItemInventory
+            // Создаем ArmorInventory из ItemInventory
             armorSlot = new ArmorInventory(
                 new ItemInventory
                 {
@@ -312,19 +311,17 @@ public class Inventory : MonoBehaviour
 
     public void OnArmorSlotClicked()
     {
-        // ���� �� ������ ������, � � ����� ����� ���-�� �����:
+        // Если предмет не является броней, возвращаемся
         if (currentID == -1)
         {
             if (armorSlot.id == 0) return;
 
-            // �������� ������ � currentItem (����� ������� �������, ���� �������� ����):
+            // Создаем currentItem из ArmorInventory
             currentItem = CopyInventoryItem(armorSlot);
 
-            // ������� ����� � ���������: 
             if (playerHealth != null)
                 playerHealth.RemoveArmor();
 
-            // ������� UI-���� (������ �������������):
             armorSlot.id = 0;
             armorSlot.count = 0;
             armorSlot.currentDurability = 0;
@@ -332,7 +329,7 @@ public class Inventory : MonoBehaviour
             armorSlot.itemGameObj.GetComponent<Image>().sprite = armorSlotDefaultSprite;
             UpdateArmorSlotText();
 
-            // �������� ������ ����� �� ��������:
+            // Очищаем предмет
             movingObject.gameObject.SetActive(true);
             movingObject.GetComponent<Image>().sprite = data.items[currentItem.id].img;
             var txt = movingObject.GetComponentInChildren<TMP_Text>();
@@ -342,22 +339,21 @@ public class Inventory : MonoBehaviour
         }
         else
         {
-            // ���� � ������� ����� ����� (� �� ���-�� ������):
+            // Если предмет не является броней, возвращаемся
             if (!IsArmor(data.items[currentItem.id])) return;
 
-            // ���� � ����� ���� ������ �����, ������ � � ���������:
+            // Если предмет уже есть в инвентаре - удаляем его
             if (armorSlot.id != 0)
             {
                 int rem = SearchForSameItem(data.items[armorSlot.id], armorSlot.count);
                 if (rem > 0)
-                    Debug.LogWarning("�� ������� ������� ����� ���������. ��������: " + rem);
+                    Debug.LogWarning("Не удалось удалить предмет из инвентаря. Осталось: " + rem);
 
                 if (playerHealth != null)
                     playerHealth.RemoveArmor();
             }
 
-            // ��������� ����� �� ������� � ���� � �� �� ������ ����� ArmorInventory:
-            // ������ ����� �������� ���� ������ ����������� � currentItem ���������:
+            // Очищаем слот
             ArmorInventory armorFromCursor = currentItem as ArmorInventory;
             armorSlot.id = armorFromCursor.id;
             armorSlot.count = armorFromCursor.count;
@@ -366,11 +362,11 @@ public class Inventory : MonoBehaviour
             armorSlot.itemGameObj.GetComponent<Image>().sprite = data.items[currentItem.id].img;
             UpdateArmorSlotText();
 
-            // ������� � PlayerHealth �� �� ����� ������� � ��� ����������������� ����������:
+            // Добавляем предмет в PlayerHealth
             if (playerHealth != null)
                 playerHealth.EquipArmor(data.items[armorSlot.id] as ItemArmor, armorSlot);
 
-            // ������� �������
+            // Очищаем предмет
             currentItem = new ItemInventory();
             movingObject.gameObject.SetActive(false);
             currentID = -1;
@@ -384,7 +380,7 @@ public class Inventory : MonoBehaviour
         {
             if (armorSlot.id != 0)
             {
-                // ���������� ���������: �������/������������
+                // Текущая прочность
                 text.text = $"{armorSlot.currentDurability}/{armorSlot.maxDurability}";
             }
             else
@@ -421,18 +417,18 @@ public class Inventory : MonoBehaviour
         Debug.Log("Weapon slot clicked!");
         if (currentID == -1)
         {
-            // � ���� ������ - ����� �� weaponSlot
+            // Если слот пуст, возвращаемся
             if (weaponSlot.id == 0) return;
 
             currentItem = CopyInventoryItem(weaponSlot);
 
-            // ������� ����
+            // Очищаем слот
             weaponSlot = new WeaponInventory(
                 new ItemInventory { id = 0, itemGameObj = weaponSlotObject },
                 null
             );
 
-            UpdateWeaponSlotUI(); // ���������� ����� ���������� UI
+            UpdateWeaponSlotUI(); // Обновляем UI
 
             movingObject.gameObject.SetActive(true);
             movingObject.GetComponent<Image>().sprite = data.items[currentItem.id].img;
@@ -442,10 +438,10 @@ public class Inventory : MonoBehaviour
         }
         else
         {
-            // ���� ������� � ����
+            // Если предмет не является оружием, возвращаемся
             if (!(data.items[currentItem.id] is WeaponItemData)) return;
 
-            // ���� � ����� ��� ���� ������� - ������� ��� � ���������
+            // Если предмет уже есть в инвентаре - добавляем его
             if (weaponSlot.id != 0)
             {
                 int freeIndex = FindFreeSlot();
@@ -455,24 +451,24 @@ public class Inventory : MonoBehaviour
                 }
                 else
                 {
-                    Debug.LogWarning("��������� �����! �� ���� ������� ������.");
+                    Debug.LogWarning("Не удалось добавить предмет! Нет свободного слота.");
                     return;
                 }
             }
 
-            // ����������� ������ (FIXED: ��������� ������� �������)
+            // Очищаем слот
             WeaponItemData weaponData = data.items[currentItem.id] as WeaponItemData;
             weaponSlot = new WeaponInventory(
                 new ItemInventory
                 {
                     id = currentItem.id,
                     count = 1,
-                    itemGameObj = weaponSlotObject // ���������� �����!
+                    itemGameObj = weaponSlotObject // Обязательно!
                 },
                 weaponData
             );
 
-            // ��������� ������� �������
+            // Очищаем предмет
             if (currentItem is WeaponInventory weaponItem)
             {
                 weaponSlot.currentAmmo = weaponItem.currentAmmo;
@@ -482,9 +478,9 @@ public class Inventory : MonoBehaviour
                 weaponSlot.currentAmmo = weaponData.magazineSize;
             }
 
-            UpdateWeaponSlotUI(); // ���������� ����� ���������� UI
+            UpdateWeaponSlotUI(); // Обновляем UI
 
-            // �������� ������
+            // Очищаем предмет
             currentItem = new ItemInventory();
             movingObject.gameObject.SetActive(false);
             currentID = -1;
@@ -1190,7 +1186,208 @@ public class Inventory : MonoBehaviour
         return New;
     }
 
+    public InventorySaveData GetSaveData()
+    {
+        var saveData = new InventorySaveData();
+        saveData.totalWeight = GetTotalWeightInKg();
 
+        // Сохраняем основной инвентарь
+        foreach (var item in items)
+        {
+            var itemSave = new InventorySaveData.ItemSaveData
+            {
+                id = item.id,
+                count = item.count
+            };
+
+            if (item is WeaponInventory weapon)
+            {
+                itemSave.itemType = "Weapon";
+                itemSave.currentAmmo = weapon.currentAmmo;
+                itemSave.magazineSize = weapon.magazineSize;
+            }
+            else if (item is ArmorInventory armor)
+            {
+                itemSave.itemType = "Armor";
+                itemSave.currentDurability = armor.currentDurability;
+                itemSave.maxDurability = armor.maxDurability;
+            }
+            else if (item is HealInventory heal)
+            {
+                itemSave.itemType = "Heal";
+                itemSave.currentHeal = heal.currentHeal;
+                itemSave.maxHeal = heal.maxHeal;
+            }
+            else
+            {
+                itemSave.itemType = "Item";
+            }
+
+            saveData.items.Add(itemSave);
+        }
+
+        // Сохраняем слот оружия
+        if (weaponSlot != null && weaponSlot.id != 0)
+        {
+            saveData.weaponSlot = new InventorySaveData.WeaponSaveData
+            {
+                id = weaponSlot.id,
+                currentAmmo = weaponSlot.currentAmmo,
+                magazineSize = weaponSlot.magazineSize
+            };
+        }
+
+        // Сохраняем слот брони
+        if (armorSlot != null && armorSlot.id != 0)
+        {
+            saveData.armorSlot = new InventorySaveData.ArmorSaveData
+            {
+                id = armorSlot.id,
+                currentDurability = armorSlot.currentDurability,
+                maxDurability = armorSlot.maxDurability
+            };
+        }
+
+        // Сохраняем слот лечения
+        if (healSlot != null && healSlot.id != 0)
+        {
+            saveData.healSlot = new InventorySaveData.HealSaveData
+            {
+                id = healSlot.id,
+                currentHeal = healSlot.currentHeal,
+                maxHeal = healSlot.maxHeal
+            };
+        }
+
+        return saveData;
+    }
+
+    public void LoadFromSaveData(InventorySaveData saveData)
+    {
+        // Очищаем текущий инвентарь
+        for (int i = 0; i < maxCount; i++)
+        {
+            AddItem(i, data.items[0], 0);
+        }
+
+        // Загружаем основной инвентарь
+        for (int i = 0; i < saveData.items.Count && i < maxCount; i++)
+        {
+            var itemSave = saveData.items[i];
+            if (itemSave.id == 0) continue;
+
+            switch (itemSave.itemType)
+            {
+                case "Weapon":
+                    var weaponData = data.items[itemSave.id] as WeaponItemData;
+                    if (weaponData != null)
+                    {
+                        var weaponSlot = new WeaponInventory(
+                            new ItemInventory { id = itemSave.id, count = itemSave.count, itemGameObj = items[i].itemGameObj },
+                            weaponData
+                        )
+                        {
+                            currentAmmo = itemSave.currentAmmo,
+                            magazineSize = itemSave.magazineSize
+                        };
+                        items[i] = weaponSlot;
+                    }
+                    break;
+
+                case "Armor":
+                    var armorData = data.items[itemSave.id] as ItemArmor;
+                    if (armorData != null)
+                    {
+                        var armorSlot = new ArmorInventory(
+                            new ItemInventory { id = itemSave.id, count = itemSave.count, itemGameObj = items[i].itemGameObj },
+                            armorData
+                        )
+                        {
+                            currentDurability = itemSave.currentDurability,
+                            maxDurability = itemSave.maxDurability
+                        };
+                        items[i] = armorSlot;
+                    }
+                    break;
+
+                case "Heal":
+                    var healData = data.items[itemSave.id] as ItemHeal;
+                    if (healData != null)
+                    {
+                        var healSlot = new HealInventory(
+                            new ItemInventory { id = itemSave.id, count = itemSave.count, itemGameObj = items[i].itemGameObj },
+                            healData
+                        )
+                        {
+                            currentHeal = itemSave.currentHeal,
+                            maxHeal = itemSave.maxHeal
+                        };
+                        items[i] = healSlot;
+                    }
+                    break;
+
+                default:
+                    AddItem(i, data.items[itemSave.id], itemSave.count);
+                    break;
+            }
+        }
+
+        // Загружаем слот оружия
+        if (saveData.weaponSlot != null && saveData.weaponSlot.id != 0)
+        {
+            var weaponData = data.items[saveData.weaponSlot.id] as WeaponItemData;
+            if (weaponData != null)
+            {
+                weaponSlot = new WeaponInventory(
+                    new ItemInventory { id = saveData.weaponSlot.id, count = 1, itemGameObj = weaponSlotObject },
+                    weaponData
+                )
+                {
+                    currentAmmo = saveData.weaponSlot.currentAmmo,
+                    magazineSize = saveData.weaponSlot.magazineSize
+                };
+                UpdateWeaponSlotUI();
+            }
+        }
+
+        // Загружаем слот брони
+        if (saveData.armorSlot != null && saveData.armorSlot.id != 0)
+        {
+            var armorData = data.items[saveData.armorSlot.id] as ItemArmor;
+            if (armorData != null)
+            {
+                armorSlot = new ArmorInventory(
+                    new ItemInventory { id = saveData.armorSlot.id, count = 1, itemGameObj = armorSlotObject },
+                    armorData
+                )
+                {
+                    currentDurability = saveData.armorSlot.currentDurability,
+                    maxDurability = saveData.armorSlot.maxDurability
+                };
+                UpdateArmorSlotText();
+            }
+        }
+
+        // Загружаем слот лечения
+        if (saveData.healSlot != null && saveData.healSlot.id != 0)
+        {
+            var healData = data.items[saveData.healSlot.id] as ItemHeal;
+            if (healData != null)
+            {
+                healSlot = new HealInventory(
+                    new ItemInventory { id = saveData.healSlot.id, count = 1, itemGameObj = healSlotObject },
+                    healData
+                )
+                {
+                    currentHeal = saveData.healSlot.currentHeal,
+                    maxHeal = saveData.healSlot.maxHeal
+                };
+                UpdateHealSlotText();
+            }
+        }
+
+        UpdateInventory();
+    }
 }
 
 [System.Serializable]
@@ -1199,16 +1396,16 @@ public class ItemInventory
     public int id;
     public int count;
     public GameObject itemGameObj;
-    public TMP_Text countText;  // ������� Text �� TMP_Text
+    public TMP_Text countText;  // Заменить Text на TMP_Text
 }
 
 [System.Serializable]
 public class ArmorInventory : ItemInventory
 {
-    public int currentDurability; // ������� ��������� �����
-    public int maxDurability;     // ������������ ���������
+    public int currentDurability; // Текущая прочность брони
+    public int maxDurability;     // Максимальная прочность
 
-    // ����������� ��� ����������� �������� ��������
+    //     
     public ArmorInventory(ItemInventory baseItem, ItemArmor armorData)
     {
         id = baseItem.id;
@@ -1222,10 +1419,10 @@ public class ArmorInventory : ItemInventory
 [System.Serializable]
 public class HealInventory : ItemInventory
 {
-    public int currentHeal; // ������� ��������� �������
-    public int maxHeal;     // ������������ ���������
+    public int currentHeal; // Текущее значение лечения
+    public int maxHeal;     // Максимальное значение
 
-    // ����������� ��� ����������� �������� �������� �������
+    //      
     public HealInventory(ItemInventory baseItem, ItemHeal healData)
     {
         id = baseItem.id;
@@ -1239,8 +1436,8 @@ public class HealInventory : ItemInventory
 [System.Serializable]
 public class WeaponInventory : ItemInventory
 {
-    public int currentAmmo;     // ������� ���������� ��������
-    public int magazineSize;     // ������ ��������
+    public int currentAmmo;     // Текущее количество патронов
+    public int magazineSize;     // Размер магазина
 
     public WeaponInventory(ItemInventory baseItem, WeaponItemData weaponData)
     {
@@ -1251,7 +1448,7 @@ public class WeaponInventory : ItemInventory
         if (weaponData != null)
         {
             magazineSize = weaponData.magazineSize;
-            currentAmmo = weaponData.magazineSize; // �� ��������� ������ �������
+            currentAmmo = weaponData.magazineSize; //    
         }
         else
         {

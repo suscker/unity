@@ -24,6 +24,12 @@ public class Crate : MonoBehaviour, IInteractable
     {
         // Инициализируем инвентарь
         InitializeInventory();
+
+        // Регистрируем ящик в SaveManager
+        if (SaveManager.Instance != null)
+        {
+            SaveManager.Instance.RegisterCrate(this);
+        }
     }
 
     private void InitializeInventory()
@@ -332,4 +338,135 @@ public class Crate : MonoBehaviour, IInteractable
         }
     }
     */
+
+    private void OnDestroy()
+    {
+        // Отписываемся от SaveManager при уничтожении
+        if (SaveManager.Instance != null)
+        {
+            SaveManager.Instance.UnregisterCrate(this);
+        }
+    }
+
+    public InventorySaveData GetInventoryData()
+    {
+        var saveData = new InventorySaveData();
+        
+        // Сохраняем предметы
+        foreach (var item in items)
+        {
+            var itemSave = new InventorySaveData.ItemSaveData
+            {
+                id = item.id,
+                count = item.count
+            };
+
+            if (item is WeaponInventory weapon)
+            {
+                itemSave.itemType = "Weapon";
+                itemSave.currentAmmo = weapon.currentAmmo;
+                itemSave.magazineSize = weapon.magazineSize;
+            }
+            else if (item is ArmorInventory armor)
+            {
+                itemSave.itemType = "Armor";
+                itemSave.currentDurability = armor.currentDurability;
+                itemSave.maxDurability = armor.maxDurability;
+            }
+            else if (item is HealInventory heal)
+            {
+                itemSave.itemType = "Heal";
+                itemSave.currentHeal = heal.currentHeal;
+                itemSave.maxHeal = heal.maxHeal;
+            }
+            else
+            {
+                itemSave.itemType = "Item";
+            }
+
+            saveData.items.Add(itemSave);
+        }
+
+        return saveData;
+    }
+
+    public void LoadFromSaveData(InventorySaveData saveData)
+    {
+        if (saveData == null) return;
+
+        // Очищаем текущий инвентарь
+        InitializeInventory();
+
+        // Загружаем предметы
+        for (int i = 0; i < saveData.items.Count && i < maxSlots; i++)
+        {
+            var itemSave = saveData.items[i];
+            if (itemSave.id == 0) continue;
+
+            switch (itemSave.itemType)
+            {
+                case "Weapon":
+                    var weaponData = itemDatabase.items[itemSave.id] as WeaponItemData;
+                    if (weaponData != null)
+                    {
+                        var weaponSlot = new WeaponInventory(
+                            new ItemInventory { id = itemSave.id, count = itemSave.count },
+                            weaponData
+                        )
+                        {
+                            currentAmmo = itemSave.currentAmmo,
+                            magazineSize = itemSave.magazineSize
+                        };
+                        items[i] = weaponSlot;
+                    }
+                    break;
+
+                case "Armor":
+                    var armorData = itemDatabase.items[itemSave.id] as ItemArmor;
+                    if (armorData != null)
+                    {
+                        var armorSlot = new ArmorInventory(
+                            new ItemInventory { id = itemSave.id, count = itemSave.count },
+                            armorData
+                        )
+                        {
+                            currentDurability = itemSave.currentDurability,
+                            maxDurability = itemSave.maxDurability
+                        };
+                        items[i] = armorSlot;
+                    }
+                    break;
+
+                case "Heal":
+                    var healData = itemDatabase.items[itemSave.id] as ItemHeal;
+                    if (healData != null)
+                    {
+                        var healSlot = new HealInventory(
+                            new ItemInventory { id = itemSave.id, count = itemSave.count },
+                            healData
+                        )
+                        {
+                            currentHeal = itemSave.currentHeal,
+                            maxHeal = itemSave.maxHeal
+                        };
+                        items[i] = healSlot;
+                    }
+                    break;
+
+                default:
+                    items[i] = new ItemInventory { id = itemSave.id, count = itemSave.count };
+                    break;
+            }
+        }
+
+        // Обновляем UI если ящик открыт
+        if (isOpen)
+        {
+            var crateUI = inventoryUI.GetComponentInChildren<CrateInventoryUI>();
+            if (crateUI != null)
+            {
+                crateUI.UpdateUI(items);
+            }
+        }
+    }
 }

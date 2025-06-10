@@ -301,4 +301,11 @@ public class Shooting : MonoBehaviour
         Debug.Log("Weapon slot clicked!");
         // Implement the logic for weapon slot click
     }
+
+    public void ResetFireState()
+    {
+        isFiring = false;
+        nextFireTime = 0f;
+        // Если есть другие переменные, связанные с выстрелом — сбрось их тоже
+    }
 }
